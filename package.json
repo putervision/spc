@@ -1,0 +1,41 @@
+{
+  "name": "@putervision/spc",
+  "version": "1.0.0",
+  "description": "Space Proof Code - A tool to identify space-proofing issues in codebases",
+  "main": "lib/checker.js",
+  "bin": {
+    "space-proof-code": "./bin/cli.js"
+  },
+  "scripts": {
+    "start": "node bin/cli.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/putervision/spc.git"
+  },
+  "keywords": [
+    "space",
+    "proof",
+    "code",
+    "spaceproof",
+    "space-proof-code",
+    "spaceproofcode",
+    "space proof code",
+    "nasa code",
+    "spacex code",
+    "static-analysis"
+  ],
+  "author": "PuterVision <code@putervision.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/putervision/spc/issues"
+  },
+  "homepage": "https://github.com/putervision/spc#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
