@@ -1,6 +1,6 @@
 {
   "name": "@putervision/spc",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Space Proof Code - A tool to identify space-proofing issues in codebases",
   "main": "lib/checker.js",
   "bin": {
