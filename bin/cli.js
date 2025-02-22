@@ -91,7 +91,7 @@ async function scanDirectory(directory) {
   // Exit with an error if the directory doesn’t exist, ensuring clear user feedback
   if (!dirExists) {
     console.error(`Error: Directory '${directory}' not found or inaccessible.`);
-    process.exit(1);
+    throw new Error('process.exit(1)');
   }
 
   // Notify user of the scanning process start
@@ -118,12 +118,12 @@ async function scanDirectory(directory) {
     });
   } catch (err) {
     console.error(`Error during scan: ${err.message}`);
-    process.exit(1);
+    throw new Error('process.exit(1)');
   }
 }
 
 // Execute the main function and handle top-level errors
 main().catch((err) => {
   console.error(`Fatal error: ${err.message}`);
-  process.exit(1);
+  throw new Error('process.exit(1)');
 });
