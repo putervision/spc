@@ -18,6 +18,7 @@
 
 const fs = require('fs').promises; // Filesystem module for async directory checks
 const { scanCodebase } = require('../lib/checker'); // Import core scanning logic
+
 const packageJson = require('../package.json'); // Import package.json for version info
 
 // CLI metadata
@@ -84,17 +85,20 @@ async function scanDirectory(directory) {
   // Check if the directory exists asynchronously
   const dirExists = await fs
     .access(directory)
-    .then(() => true)
-    .catch(() => false);
+    .then(() => true) // Resolve to true if accessible
+    .catch(() => false); // Resolve to false if not found or inaccessible
 
+  // Exit with an error if the directory doesn’t exist, ensuring clear user feedback
   if (!dirExists) {
     console.error(`Error: Directory '${directory}' not found or inaccessible.`);
     process.exit(1);
   }
 
+  // Notify user of the scanning process start
   console.log(`Scanning ${directory} for space-proofing issues...`);
 
   try {
+    // Scan the directory for space-proofing issues using the core checker
     const results = await scanCodebase(directory);
 
     if (results.length === 0) {
@@ -103,8 +107,9 @@ async function scanDirectory(directory) {
     }
 
     results.forEach(({ file, language, issues }) => {
-      console.log(`\nAnalyzing ${file} (${language})...`);
+      console.log(`\nAnalyzing ${file} (${language})...`); // Header for each file
       if (issues.length > 0) {
+        // Report issues if any are found, with details for remediation
         console.log(`Issues in ${file}:`);
         issues.forEach((issue) => console.log(`  - ${issue}`));
       } else {
