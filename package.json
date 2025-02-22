@@ -81,6 +81,7 @@
     },
     "plugins": [
       "node"
-    ]
+    ],
+    "ignorePatterns": ["test/", "node_modules/"]
   }
 }
