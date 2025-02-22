@@ -1,14 +1,24 @@
 {
   "name": "@putervision/spc",
-  "version": "1.0.1",
-  "description": "Space Proof Code - A tool to identify space-proofing issues in codebases",
+  "version": "1.1.1",
+  "description": "Space Proof Code - Tools to facilitate space-proofing code by identifying performance and security related issues.",
   "main": "lib/checker.js",
   "bin": {
     "space-proof-code": "./bin/cli.js"
   },
   "scripts": {
     "start": "node bin/cli.js",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint . --ext .js",
+    "format": "prettier --write \"**/*.js\"",
+    "format:check": "prettier --check \"**/*.js\"",
+    "prepublishOnly": "npm run test && npm run lint",
+    "release": "npm version patch && npm publish --access public",
+    "self-check": "node bin/cli.js ./lib ./bin",
+    "scan": "node bin/cli.js",
+    "scan:test": "node bin/cli.js ./test/examples/"
   },
   "repository": {
     "type": "git",
@@ -24,7 +34,9 @@
     "space proof code",
     "nasa code",
     "spacex code",
-    "static-analysis"
+    "static-analysis",
+    "secure code",
+    "security-analysis"
   ],
   "author": "PuterVision <code@putervision.com>",
   "license": "MIT",
@@ -36,6 +48,39 @@
   },
   "homepage": "https://github.com/putervision/spc#readme",
   "devDependencies": {
-    "jest": "^29.7.0"
+    "eslint": "^8.57.0",
+    "eslint-plugin-node": "^11.1.0",
+    "jest": "^29.7.0",
+    "prettier": "^3.3.3"
+  },
+  "volta": {
+    "node": "18.20.4"
+  },
+  "prettier": {
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5"
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "es2021": true,
+      "jest": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:node/recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2021,
+      "sourceType": "module"
+    },
+    "rules": {
+      "no-unused-vars": "error"
+    },
+    "plugins": [
+      "node"
+    ]
   }
 }
