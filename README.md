@@ -1,6 +1,6 @@
-# Space Proof Code - A tool to identify space-proofing issues in codebases
+# Space Proof Code - Tools to facilitate space-proofing code by identifying performance and security related issues.
 
-`@putervision/spc` is a command-line tool designed to analyze codebases for patterns that violate space-proofing principles, inspired by NASA's Power of Ten rules for safety-critical software. It supports JavaScript (`.js`), Python (`.py`), and C/C++ (`.c`, `.cpp`, `.h`) files, helping developers ensure their code is robust and reliable for high-stakes environments like space missions.
+`@putervision/spc` is a command-line tool that analyzes codebases for performance and security issues, enforcing space-proofing principles inspired by NASA's Power of Ten rules for safety-critical software. Supporting JavaScript (`.js`), Python (`.py`), and C/C++ (`.c`, `.cpp`, `.h`) files, it helps developers build robust, reliable code for high-stakes environments like space missions, identifying vulnerabilities and inefficiencies that could compromise mission-critical systems.
 
 Contact us via email: [code@putervision.com](mailto:code@putervision.com)
 
@@ -11,60 +11,202 @@ To install the tool globally via npm:
 ```bash
 npm install -g @putervision/spc
 ```
+Usage for scanning code:
+```bash
+space-proof-code /path/to/code
+```
 
-## The 10 Guidelines Checked
+## Code Quality Rules
 
-This tool is inspired by NASA's "Power of Ten: Rules for Developing Safety-Critical Code" by Gerard J. Holzmann, adapted for general use across JavaScript, Python, and C/C++. Below are the 10 guidelines and how the tool checks for violations:
+`@putervision/spc` enforces a set of code quality rules inspired by NASA's Power of Ten guidelines, tailored to ensure performance, reliability, and maintainability in space-ready software. These checks go beyond security to identify patterns that could degrade system efficiency or stability in high-stakes environments like space missions. Below are the key rules applied across JavaScript (`.js`), Python (`.py`), and C/C++ (`.c`, `.cpp`, `.h`) files:
 
-1. **Restrict to Simple Control Flow**
-   - **Description**: Avoid complex constructs like `goto`, `break`, `continue`, or multiple returns that make code hard to verify.
-   - **Check**: Flags `break`, `continue`, `goto` (C), and functions with multiple `return` statements.
-   - **Example**: `if (x) return 1; return 2;` triggers "multiple_returns".
+1. **Simple Control Flow (`complex_flow`, `multiple_returns`, `nested_conditionals`)**
+   - **Purpose**: Ensures code avoids complex control structures (e.g., multiple returns, deep nesting) that hinder verification and increase error risk.
+   - **Example**:
+     ```javascript
+     function foo() { if (x) return 1; return 2; } // Flagged: multiple returns
+     ```
+     - Fix: Use a single return point.
 
-2. **All Loops Must Have a Fixed Upper Bound**
-   - **Description**: Loops must terminate predictably to avoid infinite execution in critical systems.
-   - **Check**: Detects unbounded loops like `while (true)` or `for (;;)` without clear exit conditions.
-   - **Example**: `while (condition)` without a break condition is flagged.
+2. **Bounded Loops (`unbounded_loops`)**
+   - **Purpose**: Guarantees loops have predictable termination to prevent infinite execution, critical for real-time systems.
+   - **Example**:
+     ```python
+     while True: print("loop") // Flagged: unbounded
+     ```
+     - Fix: Add a break condition (e.g., `while i < 10`).
 
-3. **No Dynamic Memory Allocation After Initialization**
-   - **Description**: Prevent runtime memory allocation (e.g., `malloc`, `new`) to avoid fragmentation or exhaustion.
-   - **Check**: Flags `malloc` (C), `new` (JS), and `list()`/`dict()` (Python) as dynamic allocations.
-   - **Example**: `let arr = new Array(10);` triggers "dynamic_memory".
+3. **Static Memory Allocation (`dynamic_memory`)**
+   - **Purpose**: Flags dynamic memory allocation after initialization, which can lead to fragmentation or exhaustion in constrained environments.
+   - **Example**:
+     ```c
+     int* ptr = malloc(10); // Flagged: dynamic
+     ```
+     - Fix: Use static arrays (e.g., `int arr[10]`).
 
-4. **Keep Functions Small and Focused**
-   - **Description**: Functions should fit on one page (max 60 lines) for readability and testability.
-   - **Check**: Measures function length and flags those exceeding 60 lines.
-   - **Example**: A 75-line function triggers a warning.
+4. **Small Functions (`exceeds_max_lines`)**
+   - **Purpose**: Limits function size (max 60 lines) for readability and testability, reducing cognitive load in mission-critical code.
+   - **Example**:
+     ```javascript
+     function big() { /* 61+ lines */ } // Flagged: too long
+     ```
+     - Fix: Split into smaller functions.
 
-5. **Use at Least Two Assertions Per Function**
-   - **Description**: Runtime checks catch errors early (though harder to enforce in this tool).
-   - **Check**: Not directly enforced (requires AST parsing), but encourages manual review.
-   - **Example**: No automatic flag; add assertions like `if (!x) throw Error()` manually.
+5. **Scoped Variables (`global_vars`)**
+   - **Purpose**: Encourages minimal variable scope to avoid unintended side effects, enhancing code predictability.
+   - **Example**:
+     ```javascript
+     var global = 5; // Flagged: global scope
+     ```
+     - Fix: Use `let` or `const` within blocks.
 
-6. **Declare Data Objects at the Smallest Possible Scope**
-   - **Description**: Minimize variable scope to reduce side effects.
-   - **Check**: Flags global declarations like `var x` (JS) or `global x` (Python).
-   - **Example**: `var globalVar = 5;` triggers "global_vars".
+6. **Checked Returns (`unchecked_return`)**
+   - **Purpose**: Ensures all non-void function returns are used, catching errors that could go unnoticed in space systems.
+   - **Example**:
+     ```python
+     requests.get("url") // Flagged: return ignored
+     ```
+     - Fix: Assign to a variable (e.g., `resp = requests.get("url")`).
 
-7. **Check Return Values of All Non-Void Functions**
-   - **Description**: Ensure function results are used to catch errors.
-   - **Check**: Flags standalone function calls without assignment or condition (e.g., `foo();`).
-   - **Example**: `getData();` triggers "Unchecked function return".
+7. **Avoid Dynamic Code (`eval_usage`)**
+   - **Purpose**: Prohibits dynamic code execution (e.g., `eval`) that’s unpredictable and hard to verify, a risk in space environments.
+   - **Example**:
+     ```javascript
+     eval("code"); // Flagged: unsafe
+     ```
+     - Fix: Use static logic instead.
 
-8. **Limit the Use of Preprocessor**
-   - **Description**: Avoid macros or dynamic code that obscures logic (JS/Python use `eval` as analog).
-   - **Check**: Flags `eval`, `Function` (JS), `exec` (Python), or `system` (C).
-   - **Example**: `eval("code")` triggers "eval_usage".
+8. **No Recursion (`recursion`)**
+   - **Purpose**: Flags recursive calls that could exhaust stack space or complicate verification in resource-limited systems.
+   - **Example**:
+     ```c
+     int factorial(int n) { return factorial(n-1); } // Flagged: recursive
+     ```
+     - Fix: Convert to iteration.
 
-9. **Restrict Pointer Use**
-   - **Description**: Limit pointer dereferencing to one level (not directly applicable to JS/Python).
-   - **Check**: In C, flags patterns like `**p` (not implemented here; regex-based).
-   - **Example**: C-specific; JS/Python skip this rule.
+9. **Predictable Timing (`async_risk`, `set_timeout`)**
+   - **Purpose**: Detects asynchronous or timing-dependent operations that introduce non-determinism, undesirable in real-time space software.
+   - **Example**:
+     ```javascript
+     setTimeout(() => {}, 1000); // Flagged: timing-dependent
+     ```
+     - Fix: Use synchronous alternatives where possible.
 
-10. **Compile with All Warnings Enabled and Clean**
-    - **Description**: Treat warnings as errors and resolve them.
-    - **Check**: Indirectly encourages clean code; tool flags risky patterns like `try/catch`.
-    - **Example**: `try { ... }` triggers "try_catch" as a potential masking issue.
+10. **Minimal Imports (`import_risk`)**
+    - **Purpose**: Flags wildcard imports in Python that can bloat code or introduce unexpected dependencies, reducing reliability.
+    - **Example**:
+      ```python
+      from os import * // Flagged: wildcard
+      ```
+      - Fix: Import specific items (e.g., `from os import path`).
+
+These rules help ensure code is efficient, verifiable, and stable—essential for space missions where every line must perform flawlessly.
+
+## Security Rules
+
+`@putervision/spc` performs security-focused checks to protect space-bound code from vulnerabilities, such as RF-based API injection from neighboring satellites. These rules identify patterns that could compromise system integrity, confidentiality, or availability in high-stakes environments where human intervention isn’t possible. Below are the security rules enforced by the tool:
+
+1. **Unsafe Input (`unsafe_input`)**
+   - **Purpose**: Flags unvalidated inputs that could allow malicious RF data to execute unchecked commands or exploits.
+   - **Languages**: JavaScript (`req.body`), Python (`sys.argv`), C (`scanf`).
+   - **Example**:
+     ```javascript
+     const data = req.body.payload; // Flagged: no validation
+     ```
+     - Fix: Add type checks (e.g., `if (typeof data === 'string')`).
+
+2. **Network Calls (`network_call`)**
+   - **Purpose**: Detects unsecured network operations that might accept untrusted RF data without encryption or authentication.
+   - **Languages**: JavaScript (`fetch`), Python (`requests.get`), C (`socket`).
+   - **Example**:
+     ```python
+     response = requests.get("http://space.api"); // Flagged: unsecured
+     ```
+     - Fix: Use HTTPS and validate responses.
+
+3. **Weak Cryptography (`weak_crypto`)**
+   - **Purpose**: Identifies weak cryptographic functions that could let attackers predict or bypass security, critical for RF comms.
+   - **Languages**: JavaScript (`Math.random`), Python (`hashlib.md5`), C (`rand`).
+   - **Example**:
+     ```c
+     int r = rand(); // Flagged: predictable RNG
+     ```
+     - Fix: Use `crypto.randomBytes` (JS) or `/dev/urandom` (C).
+
+4. **Missing Authentication (`missing_auth`)**
+   - **Purpose**: Flags API endpoints without middleware or checks, vulnerable to unauthorized RF access.
+   - **Languages**: JavaScript (`app.post`), Python (`app.route`).
+   - **Example**:
+     ```javascript
+     app.get("/data", (req, res) => res.send("OK")); // Flagged: no auth
+     ```
+     - Fix: Add `app.use(authMiddleware)`.
+
+5. **No Error Handling (`no_error_handling`)**
+   - **Purpose**: Detects async operations without error handling, risking silent failures in space systems.
+   - **Languages**: JavaScript (async/await).
+   - **Example**:
+     ```javascript
+     async function fetchData() { await fetch("url"); } // Flagged: no try/catch
+     ```
+     - Fix: Wrap in `try { ... } catch (e) { ... }`.
+
+6. **Unsafe File Operations (`unsafe_file_op`)**
+   - **Purpose**: Flags file operations without error checks, which could fail or be exploited via RF-injected paths.
+   - **Languages**: JavaScript (`fs.readFile`), Python (`open`), C (`fopen`).
+   - **Example**:
+     ```javascript
+     fs.readFile("data.txt"); // Flagged: no error handling
+     ```
+     - Fix: Use `.catch()` or try/catch.
+
+7. **Insufficient Logging (`insufficient_logging`)**
+   - **Purpose**: Ensures API endpoints or critical functions log activity, vital for tracing RF attacks in space.
+   - **Languages**: JavaScript (`app.get`), Python (`@app.route`), C (functions).
+   - **Example**:
+     ```python
+     @app.route("/data")
+     def get_data(): return "OK" // Flagged: no logging
+     ```
+     - Fix: Add `print("Data accessed")`.
+
+8. **Unsanitized Execution (`unsanitized_exec`)**
+   - **Purpose**: Detects command execution with unsanitized inputs, risking RF-driven command injection.
+   - **Languages**: JavaScript (`exec`), Python (`os.system`), C (`system`).
+   - **Example**:
+     ```javascript
+     exec(`echo ${userInput}`); // Flagged: injection risk
+     ```
+     - Fix: Use parameterized commands (e.g., `["echo", userInput]`).
+
+9. **Exposed Secrets (`exposed_secrets`)**
+   - **Purpose**: Flags hardcoded secrets that could be extracted via RF attacks or memory dumps.
+   - **Languages**: JavaScript (`apiKey = "..."`), Python, C (`char* key = "..."`).
+   - **Example**:
+     ```javascript
+     const apiKey = "xyz123"; // Flagged: hardcoded
+     ```
+     - Fix: Use environment variables (`process.env.API_KEY`).
+
+10. **Unrestricted CORS (`unrestricted_cors`)**
+    - **Purpose**: Identifies overly permissive CORS configs that could allow unauthorized RF clients (if web-exposed).
+    - **Languages**: JavaScript (`cors({ origin: "*" })`).
+    - **Example**:
+      ```javascript
+      app.use(cors({ origin: "*" })); // Flagged: unrestricted
+      ```
+      - Fix: Specify trusted origins (e.g., `origin: "trusted.sat"`).
+
+11. **Buffer Overflow Risk (`buffer_overflow_risk`)**
+    - **Purpose**: Flags unsafe string operations in C that could be exploited via RF-injected data.
+    - **Languages**: C (`strcpy`).
+    - **Example**:
+      ```c
+      strcpy(dest, src); // Flagged: overflow risk
+      ```
+      - Fix: Use `strncpy` with length checks.
+
+These rules enhance space-proofing by catching vulnerabilities that static analysis can identify, complementing runtime checks like authentication and input sanitization for a fully secure system.
 
 ## Limitations
 - **Regex-Based**: May miss complex cases (e.g., comments, nested scopes) without a full parser.
