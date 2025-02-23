@@ -1,6 +1,6 @@
 {
   "name": "@putervision/spc",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "Space Proof Code - Tools to facilitate space-proofing code by identifying performance and security related issues.",
   "main": "lib/scanner.js",
   "bin": {
