@@ -1,6 +1,14 @@
 # Space Proof Code - Tools to facilitate space-proofing code by identifying performance and security related issues.
 
-`@putervision/spc` is a command-line tool that analyzes codebases for performance and security issues, enforcing space-proofing principles inspired by NASA's Power of Ten rules for safety-critical software. Supporting JavaScript (`.js`), Python (`.py`), and C/C++ (`.c`, `.cpp`, `.h`) files, it helps developers build robust, reliable code for high-stakes environments like space missions, identifying vulnerabilities and inefficiencies that could compromise mission-critical systems.
+`@putervision/spc` is a command-line tool that analyzes codebases for performance and security issues, enforcing space-proofing principles inspired by NASA's Power of Ten rules for safety-critical software. Supporting JavaScript/TypeScript (`.js`, `.ts`), Python (`.py`), and C/C++ (`.c`, `.cpp`, `.h`) files, it helps developers build robust, reliable code for high-stakes environments like space missions, identifying vulnerabilities and inefficiencies that could compromise mission-critical systems.
+
+1. [Install & Usage](#installation)
+2. [Code Quality & Performance Rules](#code-quality-rules)
+3. [Security Rules](#security-rules)
+4. [Limitations](#limitations)
+5. [Contributing](#contributing)
+6. [License](#license)
+7. [Author](#author)
 
 Contact us via email: [code@putervision.com](mailto:code@putervision.com)
 
@@ -9,16 +17,18 @@ Contact us via email: [code@putervision.com](mailto:code@putervision.com)
 To install the tool globally via npm:
 
 ```bash
+# install space proof code globally
 npm install -g @putervision/spc
 ```
-Usage for scanning code:
+Example usage for scanning code:
 ```bash
-space-proof-code /path/to/code
+# use within a dir or specify a code path
+space-proof-code [/path/to/code]
 ```
 
 ## Code Quality Rules
 
-`@putervision/spc` enforces a set of code quality rules inspired by NASA's Power of Ten guidelines, tailored to ensure performance, reliability, and maintainability in space-ready software. These checks go beyond security to identify patterns that could degrade system efficiency or stability in high-stakes environments like space missions. Below are the key rules applied across JavaScript (`.js`), Python (`.py`), and C/C++ (`.c`, `.cpp`, `.h`) files:
+`@putervision/spc` enforces a set of code quality rules inspired by NASA's Power of Ten guidelines, tailored to ensure performance, reliability, and maintainability in space-ready software. These checks go beyond security to identify patterns that could degrade system efficiency or stability in high-stakes environments like space missions. Below are the key rules applied across JavaScript/TypeScript (`.js`, `.ts`), Python (`.py`), and C/C++ (`.c`, `.cpp`, `.h`) files:
 
 1. **Simple Control Flow (`complex_flow`, `multiple_returns`, `nested_conditionals`)**
    - **Purpose**: Ensures code avoids complex control structures (e.g., multiple returns, deep nesting) that hinder verification and increase error risk.
@@ -215,9 +225,9 @@ These rules enhance space-proofing by catching vulnerabilities that static analy
 
 ## Contributing
 - Report issues or suggest features via GitHub.
-- To extend support for other languages, modify `LANGUAGE_PATTERNS` in `lib/checker.js`.
+- To extend support for other languages, modify `LANGUAGE_PATTERNS` in `lib/scanner.js`.
 ## License
 MIT License - see [LICENSE](LICENSE) for details.
 
 ## Author
-PuterVision <code@putervision.com>
+PuterVision <code@putervision.com> - https://putervision.com

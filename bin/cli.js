@@ -17,7 +17,7 @@
  */
 
 const fs = require('fs').promises; // Filesystem module for async directory checks
-const { scanCodebase } = require('../lib/checker'); // Import core scanning logic
+const { scanCodebase } = require('../lib/scanner'); // Import core scanning logic
 
 const packageJson = require('../package.json'); // Import package.json for version info
 
@@ -98,7 +98,7 @@ async function scanDirectory(directory) {
   console.log(`Scanning ${directory} for space-proofing issues...`);
 
   try {
-    // Scan the directory for space-proofing issues using the core checker
+    // Scan the directory for space-proofing issues using the core scanner
     const results = await scanCodebase(directory);
 
     if (results.length === 0) {

@@ -1,4 +1,4 @@
-const { scanCodebase } = require('../lib/checker');
+const { scanCodebase } = require('../lib/scanner');
 const path = require('path');
 
 // Mock the entire 'fs' module, including fs.promises
@@ -366,10 +366,10 @@ describe('security checks', () => {
     jest.spyOn(path, 'extname').mockReturnValue('.js');
 
     const results = await scanCodebase('/mock/dir');
-    expect(results[0].issues[1]).toContain(
+    expect(results[0].issues).toContain(
       'Line 3: Unchecked function return - \'fetch("http://space.api");\''
     );
-    expect(results[0].issues[2]).toContain(
+    expect(results[0].issues).toContain(
       'Line 3: Security risk - Unchecked return from critical function - \'fetch("http://space.api");\''
     );
   });
