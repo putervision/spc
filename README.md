@@ -1,14 +1,17 @@
 # Space Proof Code - Tools to facilitate space-proofing code by identifying performance and security related issues.
 
+[![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://github.com/putervision/spc)
+
 `@putervision/spc` is a command-line tool that analyzes codebases for performance and security issues, enforcing space-proofing principles inspired by NASA's Power of Ten rules for safety-critical software. Supporting JavaScript/TypeScript (`.js`, `.ts`), Python (`.py`), and C/C++ (`.c`, `.cpp`, `.h`) files, it helps developers build robust, reliable code for high-stakes environments like space missions, identifying vulnerabilities and inefficiencies that could compromise mission-critical systems.
 
 1. [Install & Usage](#installation)
 2. [Code Quality & Performance Rules](#code-quality-rules)
 3. [Security Rules](#security-rules)
-4. [Limitations](#limitations)
-5. [Contributing](#contributing)
-6. [License](#license)
-7. [Author](#author)
+4. [Zero Dependencies](#zero-dependencies)
+5. [Limitations](#limitations)
+6. [Contributing](#contributing)
+7. [License](#license)
+8. [Author](#author)
 
 Contact us via email: [code@putervision.com](mailto:code@putervision.com)
 
@@ -217,6 +220,9 @@ These rules help ensure code is efficient, verifiable, and stable—essential fo
       - Fix: Use `strncpy` with length checks.
 
 These rules enhance space-proofing by catching vulnerabilities that static analysis can identify, complementing runtime checks like authentication and input sanitization for a fully secure system.
+
+## Zero Dependencies
+- **Code from scratch**: We write all code from scratch to avoid potential issues introduced with a dependency chain. By skipping external libraries and frameworks, we dodge the risk of bugs, security holes, or breaking changes sneaking in from someone else’s code.
 
 ## Limitations
 - **Regex-Based**: May miss complex cases (e.g., comments, nested scopes) without a full parser.
