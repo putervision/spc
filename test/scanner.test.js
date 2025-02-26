@@ -6,8 +6,17 @@ jest.mock('fs', () => ({
   promises: {
     readdir: jest.fn(),
     readFile: jest.fn(),
-  },
-}));
+    stat: () => {
+      return {
+        isFile: jest.fn(() => {
+          return true;
+        })
+      }
+    },
+}}));
+
+// disable console.log
+jest.spyOn(global.console, 'log').mockImplementation();
 
 // Import fs.promises after mocking to ensure it uses the mock
 const fs = require('fs').promises;
