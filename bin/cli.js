@@ -79,6 +79,10 @@ async function main() {
     case '-v':
       console.log(`${CLI_NAME} v${VERSION}`);
       return;
+    
+    case '--create-sums':
+    case '-cs':
+      return await scanDirectory(process.cwd(), true);
 
     default:
       if (args[1]) {
