@@ -5,16 +5,16 @@
 
 `@putervision/spc` is a command-line tool that analyzes codebases for performance and security issues, enforcing space-proofing principles inspired by NASA's Power of Ten rules for safety-critical software. Supporting JavaScript/TypeScript (`.js`, `.ts`), Python (`.py`), and C/C++ (`.c`, `.cpp`, `.h`) files, it helps developers build robust, reliable code for high-stakes environments like space missions, identifying vulnerabilities and inefficiencies that could compromise mission-critical systems. 
 
-Generate a checksum file in your code path directory (`/code/path/checksums.sha256.txt`) with argument `-cs` or `--create-sums` and then subsequent scans will check scanned files against hashes stored in the checksum.
 
 1. [Install & Usage](#installation)
-2. [Code Quality & Performance Rules](#code-quality-rules)
-3. [Security Rules](#security-rules)
-4. [Zero Dependencies](#zero-dependencies)
-5. [Limitations](#limitations)
-6. [Contributing](#contributing)
-7. [License](#license)
-8. [Author](#author)
+2. [Command Arguments](#command-arguments)
+3. [Code Quality & Performance Rules](#code-quality-rules)
+4. [Security Rules](#security-rules)
+5. [Zero External Dependencies](#zero-external-dependencies)
+6. [Limitations](#limitations)
+7. [Contributing](#contributing)
+8. [License](#license)
+9. [Author](#author)
 
 Contact us via email: [code@putervision.com](mailto:code@putervision.com)
 
@@ -29,9 +29,20 @@ npm install -g @putervision/spc
 Example usage for scanning code:
 ```bash
 # use within a dir or specify a code path
-space-proof-code [/path/to/code]
+space-proof-code /path/to/code
 ```
-Create a checksum file that gets checked with subsequent scan:
+
+## Command Arguments
+`space-proof-code|spc [/path/to/code][-cs]|[-v]|[-h]`
+  
+| Argument      | Description                  | Required? | Default      |
+|---------------|------------------------------|-----------|--------------|
+| `/path/to/code` | Path to the code you want to scan | No | `./`
+| `--help`, `-h`     | Displays the help menu      | No       | N/A          |
+| `--version`, `-v`    | Displays the version number      | No       | N/A          |
+| `--create-sums`, `-cs`   | Generates a checksum file in the scanned code path      | No        | N/A        |
+
+#### Generate a checksum file in your code path directory (`/code/path/checksums.sha256.txt`) with argument `-cs` or `--create-sums` and then subsequent scans will check scanned files against hashes stored in the checksum.
 ```bash
 # this command will create the checksum file  /code/path/checksums.sha256.txt
 space-proof-code /code/path --create-sums
@@ -231,7 +242,7 @@ These rules help ensure code is efficient, verifiable, and stable—essential fo
 
 These rules enhance space-proofing by catching vulnerabilities that static analysis can identify, complementing runtime checks like authentication and input sanitization for a fully secure system.
 
-## Zero Dependencies
+## Zero External Dependencies
 - **Code from scratch**: We write all code from scratch to avoid potential issues introduced with a dependency chain. By skipping external libraries and frameworks, we dodge the risk of bugs, security holes, or breaking changes sneaking in from someone else’s code.
 
 ## Limitations
@@ -242,6 +253,7 @@ These rules enhance space-proofing by catching vulnerabilities that static analy
 ## Contributing
 - Report issues or suggest features via GitHub.
 - To extend support for other languages, modify `LANGUAGE_PATTERNS` in `lib/scanner.js`.
+
 ## License
 MIT License - see [LICENSE](LICENSE) for details.
 

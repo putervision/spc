@@ -42,16 +42,16 @@ Env vars:
     -ignores files while scanning that match on any pattern provided in the string array
 
 Options:
-  --help, -h     Display this help menu
-  --version, -v  Display the version number
-  --create-sums -cs Generates a check sum file in the scanned code path
+  --help, -h         Display this help menu
+  --version, -v      Display the version number
+  --create-sums, -cs  Generates a check sum file in the scanned code path
 
 Examples:
   ${CLI_NAME} /path/to/code    Scan the specified directory
   ${CLI_NAME}                  Scan the current directory
-  ${CLI_NAME} --help          Show this help menu
-  ${CLI_NAME} --version       Show the version
-  ${CLI_NAME} --create-sums Creates checksum file
+  ${CLI_NAME} --help           Show this help menu
+  ${CLI_NAME} --version        Show the version
+  ${CLI_NAME} --create-sums    Creates checksum file
   `);
 }
 
@@ -128,19 +128,32 @@ async function scanDirectory(directory, createSums = false) {
       return;
     }
 
+    let totalIssues = 0;
     results.forEach(({ file, language, issues }) => {
       console.log(`\nAnalyzing ${file} (${language ? language : 'n/a'})...`); // Header for each file
       if (issues?.length > 0) {
+        totalIssues += issues.length;
         // Report issues if any are found, with details for remediation
-        console.log(`Issues in ${file}:`);
-        issues.forEach((issue) => console.log(`  - ${issue.split('\n')[0]}`));
+        console.log(`Issues in ${file} (${issues.length}):`);
+        console.log(`
++---------+--------------------+
+| Line    | Issue              |
++---------+--------------------+
+        `);
+        issues.forEach((issue) => {
+          console.log(`${issue.split('\n')[0]}`);
+        });
+        console.log(`
++---------+--------------------+
+        `);
       } else {
         console.log('  No issues found.');
       }
     });
+
+    console.log(`\nTotal issues discovered: ${totalIssues}`);
   } catch (err) {
     console.error(`Error during scan: ${err.message}`);
-    throw new Error('process.exit(1)');
   }
 }
 
