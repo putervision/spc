@@ -113,3 +113,10 @@ fn weak_hash(data: &str) {
 fn execute_command(input: &str) {
     Command::new("sh").arg("-c").arg("echo ".to_string() + input).spawn();
 }
+
+
+let mut s = String::new();
+std::io::stdin().read_line(&mut s);    // Triggers: std::io::stdin().read_line (unvalidated stdin)
+let mut buf = [0; 1024];
+std::net::TcpStream::read(&mut buf);   // Triggers: std::net::TcpStream::read (unvalidated network)
+println!("{}", s);                     // Use without validation

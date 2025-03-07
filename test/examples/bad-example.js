@@ -126,3 +126,8 @@ function factorial(n) {
   let arr = new Array(100); // dynamic_memory: risky allocation in space constraints
   
   app.listen(3000);
+
+  
+const data = req.body;          // Triggers: req.body (unvalidated HTTP input)
+const userInput = prompt("Enter: "); // Triggers: prompt (unvalidated user input)
+console.log(data, userInput);   // Use without validation

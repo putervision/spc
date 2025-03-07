@@ -22,3 +22,26 @@ import hashlib
 hash = hashlib.md5("data".encode()) # weak_crypto: weak hashing
 
 data = list(range(1000)) # dynamic_memory: large dynamic allocation
+
+
+def bad_input():
+    data = input("Enter: ")  # Should match
+    print(data)
+
+    net_data = socket.socket().recv(1024)  # Should match
+    print(net_data)
+
+    file_data = open("file.txt").read()  # Should match
+    print(file_data)
+
+    safe = input("Safe: ")  # Should not match
+    if safe.isdigit():
+        print(safe)
+
+    tricky = input("Tricky: ")  # Should match
+    x = 5
+    if x > 0:  # Unrelated if, not a validation of tricky
+        print(tricky)
+
+bad_input()
+

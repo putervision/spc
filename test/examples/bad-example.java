@@ -116,3 +116,8 @@ public class BadExample {
         example.executeCommand("test"); // Unsanitized exec
     }
 }
+
+
+String param = request.getParameter("key");   // Triggers: request.getParameter (unvalidated)
+String input = new BufferedReader(new InputStreamReader(System.in)).readLine(); // Triggers: BufferedReader.readLine (unvalidated)
+System.out.println(param + input);            // Use without validation

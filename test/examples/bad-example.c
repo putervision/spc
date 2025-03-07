@@ -29,3 +29,10 @@ int main(int argc, char* argv[]) { // insufficient_logging: no logging
 
     return 0;
 }
+
+
+
+char buf[100];
+scanf("%99s", buf);         // Triggers: scanf (unvalidated stdin input)
+recv(socket_fd, buf, 99, 0); // Triggers: recv (unvalidated network input)
+printf("%s\n", buf);         // Use without validation

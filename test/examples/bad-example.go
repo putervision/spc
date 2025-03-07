@@ -120,3 +120,8 @@ func executeCommand(input string) {
     cmd := exec.Command("sh", "-c", "echo " + input) // Unsanitized
     cmd.Run()
 }
+
+
+args := os.Args                            // Triggers: os.Args (unvalidated command-line input)
+data, _ := bufio.NewReader(os.Stdin).ReadString('\n') // Triggers: bufio.NewReader(...).ReadString (unvalidated stdin)
+fmt.Println(args, data)                    // Use without validation

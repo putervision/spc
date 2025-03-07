@@ -170,6 +170,7 @@ async function scanDirectory(directory, createSums = false) {
     console.table(issueCounts);
     const end = Date.now();
     const timeDiff = (end - startTime) / 1000;
+    console.log(`${CLI_NAME} v${VERSION}`);
     console.log(`Scanning complete in ${timeDiff} seconds`);
     console.log(
       `Total severity: ${totalSeverity} - Total issues: ${totalIssues} - Risk Level: ${(totalSeverity / totalIssues).toFixed(2)} / 5.00`

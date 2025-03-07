@@ -178,9 +178,9 @@ describe('security checks', () => {
     jest.spyOn(path, 'extname').mockReturnValue('.py');
 
     const results = await scanCodebase('/mock/dir');
-    expect(results[0].issues[1].lineNum).toEqual(4);
-    expect(results[0].issues[1].issueType).toContain("network_call");
-    expect(results[0].issues[1].message).toContain('requests.get(');
+    expect(results[0].issues[2].lineNum).toEqual(4);
+    expect(results[0].issues[2].issueType).toContain("network_call");
+    expect(results[0].issues[2].message).toContain('requests.get(');
   });
 
   it('catches weak crypto in C', async () => {
@@ -350,9 +350,9 @@ describe('security checks', () => {
     jest.spyOn(path, 'extname').mockReturnValue('.c');
 
     const results = await scanCodebase('/mock/dir');
-    expect(results[0].issues[2].lineNum).toEqual(3);
-    expect(results[0].issues[2].issueType).toEqual('insufficient_logging');
-    expect(results[0].issues[2].message).toContain(
+    expect(results[0].issues[1].lineNum).toEqual(3);
+    expect(results[0].issues[1].issueType).toEqual('insufficient_logging');
+    expect(results[0].issues[1].message).toContain(
       "int main(int argc, char* argv[]) {"
     );
   });

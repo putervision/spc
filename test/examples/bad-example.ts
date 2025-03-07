@@ -30,3 +30,12 @@ function factorial(n) {
   let arr = new Array(100); // dynamic_memory: risky allocation in space constraints
   
   app.listen(3000);
+
+
+
+
+interface UserData { name: string; id: number; }  // Type definition, no runtime validation
+
+const rawInput: string = prompt("Enter data: ")!;  // Triggers: prompt (unvalidated user input)
+const requestData: UserData = req.body;           // Triggers: req.body (unvalidated HTTP input)
+console.log(rawInput, requestData.name);          // Use without validation
