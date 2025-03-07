@@ -46,9 +46,9 @@ describe('scanCodebase', () => {
     expect(results).toHaveLength(1);
     expect(results[0].file).toBe('/mock/example.js');
     expect(results[0].language).toBe('javascript');
-    expect(results[0].issues).toContain(
-      "Line 3: unbounded_loops detected - 'while (true)'"
-    );
+    expect(results[0].issues[0].lineNum).toEqual(3);
+    expect(results[0].issues[0].issueType).toContain("unbounded_loops");
+    expect(results[0].issues[0].message).toContain('while (true)');
   });
 
   it('flags dynamic memory in Python', async () => {
@@ -66,12 +66,14 @@ describe('scanCodebase', () => {
     expect(results).toHaveLength(1);
     expect(results[0].file).toBe('script.py');
     expect(results[0].language).toBe('python');
-    expect(results[0].issues[0]).toContain(
-      "Line 3: dynamic_memory detected - 'list('"
-    );
-    expect(results[0].issues[1]).toContain(
-      "Line 4: complex_flow detected - 'return data'"
-    );
+
+    expect(results[0].issues[0].lineNum).toEqual(3);
+    expect(results[0].issues[0].issueType).toContain("dynamic_memory");
+    expect(results[0].issues[0].message).toContain('list(');
+
+    expect(results[0].issues[1].lineNum).toEqual(4);
+    expect(results[0].issues[1].issueType).toContain("complex_flow");
+    expect(results[0].issues[1].message).toContain('return data');
   });
 
   it('catches multiple returns in C', async () => {
@@ -90,9 +92,10 @@ describe('scanCodebase', () => {
     expect(results).toHaveLength(1);
     expect(results[0].file).toBe('/mock/main.c');
     expect(results[0].language).toBe('c');
-    expect(results[0].issues[2]).toContain(
-      "Line 2: multiple_returns detected - 'int compute(int x)"
-    );
+
+    expect(results[0].issues[2].lineNum).toEqual(2);
+    expect(results[0].issues[2].issueType).toContain("multiple_returns");
+    expect(results[0].issues[2].message).toContain('int compute(int x)');
   });
 
   it('reports long functions in JavaScript', async () => {
@@ -111,8 +114,10 @@ describe('scanCodebase', () => {
     const results = await scanCodebase('/mock/');
 
     expect(results).toHaveLength(1);
-    expect(results[0].issues[0]).toContain(
-      "Line 1: Function 'big' exceeds 60 lines (63 lines)"
+    expect(results[0].issues[0].lineNum).toEqual(1);
+    expect(results[0].issues[0].issueType).toContain("exceeds_max_func_lines");
+    expect(results[0].issues[0].message).toContain(
+      "Function 'big' exceeds 60 lines (63 lines)"
     );
   });
 
@@ -155,9 +160,9 @@ describe('security checks', () => {
     jest.spyOn(path, 'extname').mockReturnValue('.js');
 
     const results = await scanCodebase('/mock/dir');
-    expect(results[0].issues[0]).toContain(
-      "Line 3: unsafe_input detected - 'req.body'"
-    );
+    expect(results[0].issues[0].lineNum).toEqual(3);
+    expect(results[0].issues[0].issueType).toContain("unsafe_input");
+    expect(results[0].issues[0].message).toContain('req.body');
   });
 
   it('flags network calls in Python', async () => {
@@ -173,9 +178,9 @@ describe('security checks', () => {
     jest.spyOn(path, 'extname').mockReturnValue('.py');
 
     const results = await scanCodebase('/mock/dir');
-    expect(results[0].issues).toContain(
-      "Line 4: network_call detected - 'requests.get('"
-    );
+    expect(results[0].issues[1].lineNum).toEqual(4);
+    expect(results[0].issues[1].issueType).toContain("network_call");
+    expect(results[0].issues[1].message).toContain('requests.get(');
   });
 
   it('catches weak crypto in C', async () => {
@@ -191,9 +196,9 @@ describe('security checks', () => {
     jest.spyOn(path, 'extname').mockReturnValue('.c');
 
     const results = await scanCodebase('/mock/dir');
-    expect(results[0].issues[1]).toContain(
-      "Line 4: weak_crypto detected - 'rand('"
-    );
+    expect(results[0].issues[1].lineNum).toEqual(4);
+    expect(results[0].issues[1].issueType).toContain("weak_crypto");
+    expect(results[0].issues[1].message).toContain('rand');
   });
 
   it('detects unsafe file operations in JavaScript', async () => {
@@ -209,9 +214,9 @@ describe('security checks', () => {
     jest.spyOn(path, 'extname').mockReturnValue('.js');
 
     const results = await scanCodebase('/mock/dir');
-    expect(results[0].issues).toContain(
-      'Line 4: unsafe_file_op detected - \'fs.readFile("data.txt")\''
-    );
+    expect(results[0].issues[0].lineNum).toEqual(4);
+    expect(results[0].issues[0].issueType).toContain("unsafe_file_op");
+    expect(results[0].issues[0].message).toContain('fs.readFile("data.txt")');
   });
 
   it('flags insufficient logging in Python', async () => {
@@ -228,9 +233,9 @@ describe('security checks', () => {
     jest.spyOn(path, 'extname').mockReturnValue('.py');
 
     const results = await scanCodebase('/mock/dir');
-    expect(results[0].issues[1]).toContain(
-      'Line 4: insufficient_logging detected - \'@app.route("/data")'
-    );
+    expect(results[0].issues[1].lineNum).toEqual(4);
+    expect(results[0].issues[1].issueType).toContain("insufficient_logging");
+    expect(results[0].issues[1].message).toContain("@app.route(\"/data\")");
   });
 
   it('catches unsanitized execution in C', async () => {
@@ -246,9 +251,9 @@ describe('security checks', () => {
     jest.spyOn(path, 'extname').mockReturnValue('.c');
 
     const results = await scanCodebase('/mock/dir');
-    expect(results[0].issues).toContain(
-      "Line 4: unsanitized_exec detected - 'system(input)'"
-    );
+    expect(results[0].issues[1].lineNum).toEqual(4);
+    expect(results[0].issues[1].issueType).toContain("unsanitized_exec");
+    expect(results[0].issues[1].message).toContain("system(input)");
   });
 
   it('detects exposed secrets in JavaScript', async () => {
@@ -264,8 +269,10 @@ describe('security checks', () => {
     jest.spyOn(path, 'extname').mockReturnValue('.js');
 
     const results = await scanCodebase('/mock/dir');
-    expect(results[0].issues[1]).toContain(
-      'Line 2: exposed_secrets detected - \'const apiKey = "xyz123"\''
+    expect(results[0].issues[1].issueType).toContain('exposed_secrets');
+    expect(results[0].issues[1].lineNum).toEqual(2);
+    expect(results[0].issues[1].message).toContain(
+      'const apiKey = "xyz123"'
     );
   });
 
@@ -280,8 +287,10 @@ describe('security checks', () => {
     jest.spyOn(path, 'extname').mockReturnValue('.js');
 
     const results = await scanCodebase('/mock/dir');
-    expect(results[0].issues[0]).toContain(
-      'Line 3: unrestricted_cors detected - \'app.use(cors({ origin: "*" })\''
+    expect(results[0].issues[0].lineNum).toEqual(3);
+    expect(results[0].issues[0].issueType).toContain('unrestricted_cors');
+    expect(results[0].issues[0].message).toContain(
+      'app.use(cors({ origin: "*" })'
     );
   });
 
@@ -299,8 +308,10 @@ describe('security checks', () => {
     jest.spyOn(path, 'extname').mockReturnValue('.c');
 
     const results = await scanCodebase('/mock/dir');
-    expect(results[0].issues[0]).toContain(
-      "Line 5: buffer_overflow_risk detected - 'strcpy('"
+    expect(results[0].issues[0].lineNum).toEqual(5);
+    expect(results[0].issues[0].issueType).toEqual('buffer_overflow_risk');
+    expect(results[0].issues[0].message).toContain(
+      'strcpy('
     );
   });
 
@@ -318,8 +329,10 @@ describe('security checks', () => {
     jest.spyOn(path, 'extname').mockReturnValue('.js');
 
     const results = await scanCodebase('/mock/dir');
-    expect(results[0].issues[0]).toContain(
-      'Line 4: insufficient_logging detected - \'app.get("/data", function(req, res) {'
+    expect(results[0].issues[0].lineNum).toEqual(4);
+    expect(results[0].issues[0].issueType).toEqual('insufficient_logging');
+    expect(results[0].issues[0].message).toContain(
+      'app.get("/data", function(req, res) {'
     );
   });
 
@@ -337,8 +350,10 @@ describe('security checks', () => {
     jest.spyOn(path, 'extname').mockReturnValue('.c');
 
     const results = await scanCodebase('/mock/dir');
-    expect(results[0].issues[2]).toContain(
-      "Line 3: insufficient_logging detected - 'int main(int argc, char* argv[]) {"
+    expect(results[0].issues[2].lineNum).toEqual(3);
+    expect(results[0].issues[2].issueType).toEqual('insufficient_logging');
+    expect(results[0].issues[2].message).toContain(
+      "int main(int argc, char* argv[]) {"
     );
   });
 
@@ -375,11 +390,11 @@ describe('security checks', () => {
     jest.spyOn(path, 'extname').mockReturnValue('.js');
 
     const results = await scanCodebase('/mock/dir');
-    expect(results[0].issues).toContain(
-      'Line 3: Unchecked function return - \'fetch("http://space.api");\''
+    expect(results[0].issues[1].message).toContain(
+      'Unchecked function return - \'fetch("http://space.api");\''
     );
-    expect(results[0].issues).toContain(
-      'Line 3: Security risk - Unchecked return from critical function - \'fetch("http://space.api");\''
+    expect(results[0].issues[2].message).toContain(
+      'Security risk - Unchecked return from critical function - \'fetch("http://space.api");\''
     );
   });
 });

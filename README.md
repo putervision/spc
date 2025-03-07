@@ -3,12 +3,13 @@
 
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://github.com/putervision/spc)
 
-`@putervision/spc` is a command-line tool that analyzes codebases for performance and security issues, enforcing space-proofing principles inspired by NASA's Power of Ten rules for safety-critical software. Supporting JavaScript/TypeScript (`.js`, `.ts`), Python (`.py`), and C/C++ (`.c`, `.cpp`, `.h`) files, it helps developers build robust, reliable code for high-stakes environments like space missions, identifying vulnerabilities and inefficiencies that could compromise mission-critical systems. 
+
+`@putervision/spc` is a command-line tool that analyzes codebases for performance and security issues, enforcing space-proofing principles inspired by NASA's Power of Ten rules for safety-critical software. Supporting JavaScript/TypeScript (`.js`, `.ts`), Python (`.py`), C/C++ (`.c`, `.cpp`, `.h`), Go (`.go`), Rust (`.rs`), and Java (`.java`) files, it helps developers build robust, reliable code for high-stakes environments like space missions, identifying vulnerabilities and inefficiencies that could compromise mission-critical systems. Contact us via email: [code@putervision.com](mailto:code@putervision.com)
 
 
 1. [Install & Usage](#installation)
 2. [Command Arguments](#command-arguments)
-3. [Code Quality & Performance Rules](#code-quality-rules)
+3. [Performance and Reliability Rules](#performance-and-reliability-rules)
 4. [Security Rules](#security-rules)
 5. [Zero External Dependencies](#zero-external-dependencies)
 6. [Limitations](#limitations)
@@ -16,9 +17,8 @@
 8. [License](#license)
 9. [Author](#author)
 
-Contact us via email: [code@putervision.com](mailto:code@putervision.com)
 
-## Install & Usage
+# Install & Usage
 
 To install the tool globally via npm:
 
@@ -31,8 +31,10 @@ Example usage for scanning code:
 # use within a dir or specify a code path
 space-proof-code /path/to/code
 ```
+Example output report of issues found:
+![Example Image](./assets/example_report.png "An example image")
 
-## Command Arguments
+# Command Arguments
 `space-proof-code|spc [/path/to/code][-cs]|[-v]|[-h]`
   
 | Argument      | Description                  | Required? | Default      |
@@ -50,212 +52,582 @@ space-proof-code /code/path --create-sums
 space-proof-code /code/path
 ```
 
-## Code Quality Rules
+# Performance and Reliability Rules
 
-`@putervision/spc` enforces a set of code quality rules inspired by NASA's Power of Ten guidelines, tailored to ensure performance, reliability, and maintainability in space-ready software. These checks go beyond security to identify patterns that could degrade system efficiency or stability in high-stakes environments like space missions. Below are the key rules applied across JavaScript/TypeScript (`.js`, `.ts`), Python (`.py`), and C/C++ (`.c`, `.cpp`, `.h`) files:
+`@putervision/spc` enforces a set of code quality rules inspired by NASA's Power of Ten guidelines, tailored to ensure performance, reliability, and maintainability in space-ready software. These checks go beyond security to identify patterns that could degrade system efficiency or stability in high-stakes environments like space missions. Below are the key rules applied across JavaScript/TypeScript (`.js`, `.ts`), Python (`.py`), C/C++ (`.c`, `.cpp`, `.h`), Go (`.go`), Rust (`.rs`), and Java (`.java`) files:
 
-1. **Simple Control Flow (`complex_flow`, `multiple_returns`, `nested_conditionals`)**
-   - **Purpose**: Ensures code avoids complex control structures (e.g., multiple returns, deep nesting) that hinder verification and increase error risk.
-   - **Example**:
-     ```javascript
-     function foo() { if (x) return 1; return 2; } // Flagged: multiple returns
-     ```
-     - Fix: Use a single return point.
+- [Recursion](#recursion)
+- [Dynamic Memory](#dynamic-memory)
+- [Complex Flow](#complex-flow)
+- [Async Risk](#async-risk)
+- [Unbounded Loops](#unbounded-loops)
+- [Eval Usage](#eval-usage)
+- [Global Vars](#global-vars)
+- [Try Catch](#try-catch)
+- [Set Timeout](#set-timeout)
+- [Multiple Returns](#multiple-returns)
+- [Nested Conditionals](#nested-conditionals)
+- [Exceeds Max Function Lines](#exceeds-max-function-lines)
+- [Unchecked Function Return](#unchecked-function-return)
 
-2. **Bounded Loops (`unbounded_loops`)**
-   - **Purpose**: Guarantees loops have predictable termination to prevent infinite execution, critical for real-time systems.
-   - **Example**:
-     ```python
-     while True: print("loop") // Flagged: unbounded
-     ```
-     - Fix: Add a break condition (e.g., `while i < 10`).
 
-3. **Static Memory Allocation (`dynamic_memory`)**
-   - **Purpose**: Flags dynamic memory allocation after initialization, which can lead to fragmentation or exhaustion in constrained environments.
-   - **Example**:
-     ```c
-     int* ptr = malloc(10); // Flagged: dynamic
-     ```
-     - Fix: Use static arrays (e.g., `int arr[10]`).
 
-4. **Small Functions (`exceeds_max_lines`)**
-   - **Purpose**: Limits function size (max 60 lines) for readability and testability, reducing cognitive load in mission-critical code.
-   - **Example**:
-     ```javascript
-     function big() { /* 61+ lines */ } // Flagged: too long
-     ```
-     - Fix: Split into smaller functions.
+### Recursion
+- **Severity**: 4/5
+- **Description**: Recursive calls can exhaust stack space, leading to crashes in memory-constrained systems like spacecraft. In real-time environments, this risks mission failure. Each recursive call adds a layer to the call stack, and if the recursion depth is too great, it can cause a stack overflow, potentially halting the program. In space missions, such failures could lead to loss of data or mission-critical operations. To mitigate this, prefer iteration, which uses a loop to achieve the same result without additional stack frames, or use tail-call optimization where supported, though this isn't always reliable. This rule is particularly critical in C/C++, where stack space is limited, and applies to Python and JavaScript, where deep recursion can still impact performance.  
 
-5. **Scoped Variables (`global_vars`)**
-   - **Purpose**: Encourages minimal variable scope to avoid unintended side effects, enhancing code predictability.
-   - **Example**:
-     ```javascript
-     var global = 5; // Flagged: global scope
-     ```
-     - Fix: Use `let` or `const` within blocks.
+- **Examples**:
+  - **C**: `int factorial(int n) { return factorial(n-1); }`
+  - **Python**: `def factorial(n): return factorial(n-1)`
+  - **JavaScript**: `function factorial(n) { return factorial(n-1); }`
+- **Remedy**:
+  - Replace with iteration, e.g., in C: 
+  ```c 
+  int factorial(int n) { 
+    int result = 1; 
+    for(int i = 1; i <= n; i++) 
+      result *= i; 
+    return result; 
+  }
+  ```
 
-6. **Checked Returns (`unchecked_return`)**
-   - **Purpose**: Ensures all non-void function returns are used, catching errors that could go unnoticed in space systems.
-   - **Example**:
-     ```python
-     requests.get("url") // Flagged: return ignored
-     ```
-     - Fix: Assign to a variable (e.g., `resp = requests.get("url")`).
+- **External References**:
+   - [The Power of 10: Rules for Developing Safety-Critical Code](https://en.wikipedia.org/wiki/The_Power_of_10:_Rules_for_Developing_Safety-Critical_Code) notes the avoidance of recursion to simplify verification.
+   - [NASA's Coding Standards for Flight Software](https://ntrs.nasa.gov/citations/20080039927) highlights restrictions on recursion in flight code for reliability.
 
-7. **Avoid Dynamic Code (`eval_usage`)**
-   - **Purpose**: Prohibits dynamic code execution (e.g., `eval`) that’s unpredictable and hard to verify, a risk in space environments.
-   - **Example**:
-     ```javascript
-     eval("code"); // Flagged: unsafe
-     ```
-     - Fix: Use static logic instead.
 
-8. **No Recursion (`recursion`)**
-   - **Purpose**: Flags recursive calls that could exhaust stack space or complicate verification in resource-limited systems.
-   - **Example**:
-     ```c
-     int factorial(int n) { return factorial(n-1); } // Flagged: recursive
-     ```
-     - Fix: Convert to iteration.
+### Dynamic Memory
+- **Severity**: 4/5 (C), 3/5 (Python, JS)
+- **Description**: Dynamic memory allocation, such as using malloc in C, can fragment memory or fail silently, critical in resource-limited systems. Memory fragmentation occurs when allocated and deallocated memory blocks leave non-contiguous free spaces, potentially causing allocation failures even when total memory is sufficient. In spacecraft, where memory is scarce, this can lead to system crashes or unpredictable behavior. Pre-allocate fixed buffers or pools to ensure deterministic memory usage, avoiding runtime uncertainty. For Python and JavaScript, while memory management is handled by the language, large dynamic allocations (e.g., creating large lists) can still consume significant resources, though the severity is lower due to garbage collection. This rule is vital for C, where manual management increases risks, and applies to all languages to ensure resource predictability.  
+- **Examples**:
+  - **C**: `int* ptr = malloc(10 * sizeof(int));`
+  - **Python**: `data = [0] * 1000000`
+  - **JavaScript**: `let arr = new Array(1000000);`
 
-9. **Predictable Timing (`async_risk`, `set_timeout`)**
-   - **Purpose**: Detects asynchronous or timing-dependent operations that introduce non-determinism, undesirable in real-time space software.
-   - **Example**:
-     ```javascript
-     setTimeout(() => {}, 1000); // Flagged: timing-dependent
-     ```
-     - Fix: Use synchronous alternatives where possible.
+- **Remedy**:
+  - Pre-allocate, e.g., in C: `int buffer[10];` for fixed size, or use memory pools.
 
-10. **Minimal Imports (`import_risk`)**
-    - **Purpose**: Flags wildcard imports in Python that can bloat code or introduce unexpected dependencies, reducing reliability.
-    - **Example**:
-      ```python
-      from os import * // Flagged: wildcard
-      ```
-      - Fix: Import specific items (e.g., `from os import path`).
+- **External References**: 
+  - [MITRE CWE-401: Memory Leaks](https://cwe.mitre.org/data/definitions/401.html)
+  - [The Power of 10: Rules for Developing Safety-Critical Code](https://en.wikipedia.org/wiki/The_Power_of_10:_Rules_for_Developing_Safety-Critical_Code) advises against heap allocation after initialization.
 
-These rules help ensure code is efficient, verifiable, and stable—essential for space missions where every line must perform flawlessly.
 
-## Security Rules
+### Complex Flow
+- **Severity**: 2/5
+- **Description**: Complex control structures, such as breaks, continues, and early returns, make formal verification harder, a key step in safety-critical code. Formal verification involves mathematically proving that code meets specifications, and complex flows increase the number of paths to analyze, complicating this process. Simplifying to a single exit point enhances readability and verifiability, reducing the risk of overlooked errors. This is particularly important in space missions, where code must be thoroughly checked for correctness. The rule applies across all languages, encouraging structured control flow to support maintenance and verification efforts, though the impact is less severe compared to other rules.  
 
+- **Examples**:
+  - **C**: `if (x) break; else return y;`
+  - **Python**: `if x: break; else: return y`
+  - **JavaScript**: `if (x) return 1; else continue;`
+
+- **Remedy**:
+  - Restructure, e.g., in C: 
+  ```c
+  int result; 
+  if (x) result = 1; 
+  else result = 0; 
+  return result;
+  ```
+
+- **External Reference**: 
+  - [MISRA Guidelines](https://misra.org.uk/)
+  - [MISRA C Coding Standards](https://www.blackduck.com/static-analysis-tools-sast/misra.html) provides rules on control flow for safety-critical systems.  
+  - [Formal Verification Overview](https://www.systemverilog.io/verification/gentle-introduction-to-formal-verification/) discusses how control flow affects verification complexity.
+
+
+### Unbounded Loops
+- **Severity**: 5/5
+- **Description**: Loops without clear termination can run indefinitely, locking up real-time systems. In space missions, where timing is critical for operations like communication windows or maneuver sequences, an unbounded loop can cause the system to hang, missing deadlines and potentially leading to mission failure. Always enforce explicit bounds or timeouts, such as using a counter or condition that guarantees termination, to prevent such scenarios. This rule is universally applicable, with high severity due to its potential to disrupt real-time operations, ensuring system responsiveness and reliability.  
+
+- **Examples**:
+  - **C**: `while (1) { do_work(); }`
+  - **Python**: `while True: do_work()`
+  - **JavaScript**: `for(;;) { doWork(); }`
+
+- **Remedy**:
+  - Add bounds, e.g., in C: 
+  ```c
+  for(int i = 0; i < 10; i++) { 
+    do_work(); 
+  }
+  ```
+
+- **External Reference**: 
+  - [The Power of 10: Rules for Developing Safety-Critical Code](https://en.wikipedia.org/wiki/The_Power_of_10:_Rules_for_Developing_Safety-Critical_Code) mandates fixed bounds for loops.  
+  - [Real-time operating system - Wikipedia](https://en.wikipedia.org/wiki/Real-time_operating_system) emphasizes the need for bounded execution in real-time systems.
+
+
+### Eval Usage
+- **Severity**: 5/5
+- **Description**: Dynamic code execution, such as using eval in JavaScript or Python, or system() in C, introduces unpredictability, undermining deterministic behavior required in critical systems. In space-ready software, the code must be deterministic to ensure predictable outcomes under all conditions, and dynamic execution can lead to runtime errors or security vulnerabilities. Use static logic, where code is compiled and analyzed beforehand, to maintain control and predictability. This rule is critical across all languages, with high severity due to the potential for catastrophic failures in mission-critical operations.  
+
+- **Examples**:
+  - **C**: `system("ls");`
+  - **Python**: `exec("print(x)")`
+  - **JavaScript**: `eval("console.log(x)");`
+
+- **Remedy**:
+  - Replace with static code, e.g., in Python: `print(x)` directly.
+
+- **External Reference**: 
+  - [OWASP Command Injection](https://owasp.org/www-community/attacks/Command_Injection)
+  - [Dynamic Code Execution - Security Boulevard](https://securityboulevard.com/2018/04/dynamic-code-execution/) highlights risks in security-critical systems.  
+  - [Safety-critical system - Wikipedia](https://en.wikipedia.org/wiki/Safety-critical_system) discusses the need for deterministic behavior.
+
+
+### Global Vars
+- **Severity**: 3/5
+- **Description**: Global variables risk unintended side effects across modules, especially in concurrent systems, complicating debugging and maintenance. In space missions, where multiple processes or threads might run concurrently, global variables can introduce race conditions, leading to data corruption or system failures. Encapsulate state locally within functions or pass it explicitly as parameters to enhance reliability and reduce concurrency issues. This rule applies to all languages, with moderate severity due to its potential to affect system integrity over time, particularly in multi-threaded environments. 
+
+- **Examples**:
+  - **C**: `int global_x = 5;`
+  - **Python**: `global x; x = 5`
+  - **JavaScript**: `window.x = 5;`
+
+- **Remedy**:
+  - Pass explicitly, e.g., in C: `void func(int x) { /* use x */ }`
+
+- **External Reference**: 
+  - [SEI CERT Coding Standard](https://wiki.sei.cmu.edu/confluence/display/c)
+  - [Why are global variables generally frowned upon?](https://www.quora.com/Why-are-global-variables-generally-frowned-upon-What-are-some-of-the-risks-associated-with-using-them) discusses concurrency risks.  
+  - [Global variable - Wikipedia](https://en.wikipedia.org/wiki/Global_variable) notes issues in multi-threaded systems.
+
+
+
+### Try Catch
+- **Severity**: 2/5
+- **Description**: Exception handling, such as try-catch blocks, can mask errors, reducing reliability in systems where every failure must be explicit. In space-ready software, where reliability and predictability are paramount, exceptions can introduce non-deterministic execution times and hide critical errors, making diagnosis difficult. Prefer error codes or assertions to ensure errors are handled predictably, providing clear feedback for debugging and maintenance. This rule is less severe but important for maintaining explicit error handling, applicable across languages with exception mechanisms.
+
+- **Remedy**:
+  - Use error codes, e.g., in C: 
+  ```c
+  int result = risky(); 
+  if (result != OK) handle_error();
+  ```
+
+- **Examples**:
+  - **C**: `try { risky(); } catch(...) {}` (C++)
+  - **Python**: `try: risky() except: pass`
+  - **JavaScript**: `try { risky(); } catch(e) {}`
+- **External Reference**: 
+  - [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/)
+  - [Exception Handling in Safety-Critical Systems](https://users.ece.cmu.edu/~koopman/des_s99/exceptions/) discusses non-determinism.
+
+### Multiple Returns
+- **Severity**: 2/5
+- **Description**: Multiple return points complicate control flow analysis, hindering formal verification, essential for safety-critical code. In space-ready software, where code must be thoroughly verified, having a single exit point simplifies tracing all possible paths, reducing the risk of overlooked errors. Use a single exit to enhance clarity and verifiability, ensuring all cleanup or final operations are performed consistently, applicable across all languages for maintainability.  
+
+- **Examples**:
+  - **C**: `int foo() { if(x) return 1; return 0; }`
+  - **Python**: `def foo(): if x: return 1; return 0`
+  - **JavaScript**: `function foo() { if(x) return 1; return 0; }`
+
+- **Remedy**:
+  - Restructure, e.g., in C: 
+  ```c
+  int result; 
+  if (x) result = 1; 
+  else result = 0; 
+  return result;
+  ```
+
+- **External Reference**: 
+  - [MISRA Guidelines](https://misra.org.uk/)
+  - [Coding Tip: Have A Single Exit Point](https://www.tomdalling.com/blog/coding-tips/coding-tip-have-a-single-exit-point/) advocates for maintainability.
+
+
+### Nested Conditionals
+- **Severity**: 2/5
+- **Description**: Deep nesting increases complexity and error risk, though not directly catastrophic. In space-ready software, where code must be reliable and maintainable over long periods, nested conditionals can make understanding and verifying code difficult, increasing cognitive load. Flatten or refactor into smaller, linear conditionals or separate functions to reduce complexity, enhancing readability and reducing error potential, applicable across all languages for long-term reliability.  
+
+- **Examples**:
+  - **C**: `if (x) { if (y) { do_work(); } }`
+  - **Python**: `if x: if y: do_work()`
+  - **JavaScript**: `if (x) { if (y) { doWork(); } }`
+
+- **Remedy**:
+  - Use guard clauses, e.g., in C: 
+  ```c
+  if (!x) return; 
+  if (!y) return; 
+  do_work();
+  ```
+
+- **External Reference**: 
+  - [Cyclomatic Complexity](https://www.perforce.com/blog/qac/what-cyclomatic-complexity)
+  - [Cyclomatic complexity - Wikipedia](https://en.wikipedia.org/wiki/Cyclomatic_complexity) measures impact of nesting on complexity.  
+  - [Managing code complexity with conditionals](https://ducmanhphan.github.io/2020-02-26-Refactoring-conditional-complexity/) offers refactoring strategies.
+
+### Set Timeout
+- **Severity**: 4/5 (JS-specific, omitted in C/Python)
+- **Description**: Timing-dependent operations, like JavaScript's setTimeout, introduce non-determinism, risky in real-time systems. The actual execution time can vary based on system load, leading to unpredictable behavior, which is unacceptable in space missions where timing is critical. Use fixed intervals or event-driven logic, such as setInterval with careful management, to ensure deterministic timing. This rule is specific to JavaScript, reflecting its use in potentially mission-related applications, with high severity due to timing sensitivity in real-time operations. 
+
+- **Examples**:
+  - **C**: N/A (no direct equivalent)
+  - **Python**: N/A (no direct equivalent, but `time.sleep()` could approximate)
+  - **JavaScript**: `setTimeout(doWork, 1000);`
+
+- **Remedy**:
+  - Use setInterval with careful management: 
+  ```javascript
+  setInterval(doWork, 1000);
+  ```
+
+- **External Reference**: 
+  - [Real-Time Systems Overview](https://www.cs.unc.edu/~anderson/teach/real-time/)  
+  - [Scheduling: setTimeout and setinterval](https://javascript.info/settimeout-setinterval) discusses non-deterministic behavior.
+
+
+### Import Risk
+- **Severity**: 3/5 (Python only)
+- **Description**: Wildcard imports (from module import *) in Python bloat codebases by importing all names from a module into the current namespace, risking namespace pollution, unintended name clashes, and complicating formal verification. This practice can obscure the origin of functions or variables, making it harder to trace dependencies and ensure deterministic behavior—critical in high-stakes environments like space missions. Explicit imports (from module import specific_name) are preferred to maintain clarity, reduce the likelihood of errors, and simplify auditing and maintenance of safety-critical code.
+
+- **Examples**:
+  - **C**: N/A
+  - **Python**: `from os import *`
+  - **JavaScript**: N/A
+
+- **Remedy**:
+  - Import specific names or the module itself: 
+  ```python
+    from os import mkdir  # Explicit: only mkdir is imported
+    # Or
+    import os  # Preferred: use os.mkdir() for clarity
+    os.mkdir("new_dir")
+  ```
+
+- **External Reference**: 
+  - [PEP 8 Style Guide](https://peps.python.org/pep-0008/#imports)
+  - [Python Documentation - The import system](https://docs.python.org/3/reference/import.html#the-import-system) Details how from module import * imports all public names, highlighting the risk of overwriting existing names and the preference for explicit imports.
+  - [Real Python - Python Imports 101](https://realpython.com/python-import/#importing-modules) Explains the dangers of namespace pollution with wildcard imports and advocates for explicit imports to enhance code readability and maintainability.
+
+
+### Exceeds Max Function Lines
+- **Severity**: 3/5
+- **Description**: Functions exceeding a maximum line count (e.g., 50-100 lines) become hard to verify and maintain, increasing error risk in critical systems. Long functions are harder to understand, test, and debug, potentially hiding bugs that could affect mission reliability. Break long functions into smaller, focused units, each performing a single task, to improve readability, testability, and verifiability, crucial for space missions where code must be robust and maintainable over extended periods, applicable across all languages.  
+- **Examples**:
+  - **C**: `int process() { /* 200 lines of logic */ }`
+  - **Python**: `def process(): # 200 lines of logic`
+  - **JavaScript**: `function process() { /* 200 lines of logic */ }`
+
+- **Remedy**:
+  - Split, e.g., in C: 
+  ```c
+    int process_part1(); 
+    int process_part2();
+  ```
+
+- **External Reference**:
+  - [NASA Coding Standards - Function Length](https://ntrs.nasa.gov/citations/20040086773)
+  - [What are some benefits of using small functions and methods in programs?](https://www.quora.com/What-are-some-benefits-of-using-small-functions-and-methods-in-programs) emphasizes testability.
+
+
+### Unchecked Function Return
+- **Severity**: 2/5
+- **Description**: Ignoring return values from non-critical functions can mask subtle bugs or inefficiencies, though it’s not immediately catastrophic. In space-ready software, where every operation must be reliable, unchecked returns can lead to undetected errors, potentially compromising mission-critical operations. Check returns unless explicitly void or harmless, ensuring errors are handled and system state remains consistent, applicable across all languages for enhanced reliability. 
+
+- **Examples**:
+  - **C**: `printf("hello");` (return ignored)
+  - **Python**: `os.mkdir("dir")` (exception possible, not checked)
+  - **JavaScript**: `setTimeout(doWork, 1000);` (ID ignored)
+
+- **Remedy**:
+  - Check, e.g., in C: 
+  ```c
+    if (printf("hello") < 0) handle_error();
+  ```
+
+- **External Reference**: 
+  - [SEI CERT C - Unchecked Returns](https://wiki.sei.cmu.edu/confluence/display/c/EXP12-C.+Do+not+ignore+values+returned+by+functions)
+  - [The importance of checking function return values](https://realpython.com/python-return-statement/) stresses error handling.
+  - [Function return values - MDN](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/Return_values) discusses proper usage.
+
+
+
+# Security Rules
 `@putervision/spc` performs security-focused checks to protect space-bound code from vulnerabilities, such as RF-based API injection from neighboring satellites. These rules identify patterns that could compromise system integrity, confidentiality, or availability in high-stakes environments where human intervention isn’t possible. Below are the security rules enforced by the tool:
+- [Unsafe Input](#unsafe-input)
+- [Network Call](#network-call)
+- [Weak Crypto](#weak-crypto)
+- [Unsafe File Op](#unsafe-file-op)
+- [Insufficient Logging](#insufficient-logging)
+- [Unsanitized Exec](#unsanitized-exec)
+- [Exposed Secrets](#exposed-secrets)
+- [Unrestricted CORS](#unrestricted-cors)
+- [Checksum Mismatch](#checksum-mismatch)
+- [Unchecked Function Return Critical](#unchecked-function-return-critical)
 
-1. **Unsafe Input (`unsafe_input`)**
-   - **Purpose**: Flags unvalidated inputs that could allow malicious RF data to execute unchecked commands or exploits.
-   - **Languages**: JavaScript (`req.body`), Python (`sys.argv`), C (`scanf`).
-   - **Example**:
-     ```javascript
-     const data = req.body.payload; // Flagged: no validation
-     ```
-     - Fix: Add type checks (e.g., `if (typeof data === 'string')`).
 
-2. **Network Calls (`network_call`)**
-   - **Purpose**: Detects unsecured network operations that might accept untrusted RF data without encryption or authentication.
-   - **Languages**: JavaScript (`fetch`), Python (`requests.get`), C (`socket`).
-   - **Example**:
-     ```python
-     response = requests.get("http://space.api"); // Flagged: unsecured
-     ```
-     - Fix: Use HTTPS and validate responses.
+### Unsafe Input
+- **Severity**: 4/5
+- **Description**: Unvalidated inputs pose a significant risk in programming, particularly in systems exposed to radio frequency (RF) communications. When inputs are not properly checked or sanitized, they can lead to a variety of security vulnerabilities and system failures. One common issue is buffer overflow, where the input data exceeds the expected size of the buffer, causing memory to be overwritten in unpredictable ways. This can result in program crashes or, in more severe cases, allow an attacker to execute arbitrary code. Another critical risk is injection attacks, such as SQL injection or command injection. In these attacks, an attacker can insert malicious code or commands into the input, which the program then executes, potentially leading to data breaches or system compromise. In RF-exposed systems, the risk is amplified because the input data might be coming from an external, potentially hostile environment. The data could be corrupted due to transmission errors or deliberately tampered with to exploit vulnerabilities. To mitigate these risks, it's essential to always validate and sanitize inputs. This includes checking the type, format, and size of the input data, and ensuring that it conforms to expected patterns. For RF systems, additional measures such as error detection and correction codes can help ensure data integrity. In summary, unvalidated inputs are a major security and reliability concern that can be addressed through rigorous input validation and sanitization practices.
 
-3. **Weak Cryptography (`weak_crypto`)**
-   - **Purpose**: Identifies weak cryptographic functions that could let attackers predict or bypass security, critical for RF comms.
-   - **Languages**: JavaScript (`Math.random`), Python (`hashlib.md5`), C (`rand`).
-   - **Example**:
-     ```c
-     int r = rand(); // Flagged: predictable RNG
-     ```
-     - Fix: Use `crypto.randomBytes` (JS) or `/dev/urandom` (C).
+- **Examples**:
+  - **C**: `scanf("%s", buf);`
+  - **Python**: `user_input = input();`
+  - **JavaScript**: `let data = req.body.payload;`
 
-4. **Missing Authentication (`missing_auth`)**
-   - **Purpose**: Flags API endpoints without middleware or checks, vulnerable to unauthorized RF access.
-   - **Languages**: JavaScript (`app.post`), Python (`app.route`).
-   - **Example**:
-     ```javascript
-     app.get("/data", (req, res) => res.send("OK")); // Flagged: no auth
-     ```
-     - Fix: Add `app.use(authMiddleware)`.
+- **Remedies**:
+  - **Input Validation**: Always check that the input data matches the expected type and format. For example, ensure that a field expected to be a number actually contains a numeric value.
+  - **Sanitization**: Cleanse the input data to remove any characters or patterns that could be used for malicious purposes, such as SQL injection or cross-site scripting (XSS).
+  - **Parameterized Queries**: Use parameterized queries or prepared statements in database interactions to separate code from data, preventing injection attacks.
+  - **Buffer Size Management**: Ensure that buffers are sized appropriately and that input data does not exceed these sizes. Use bounded input functions that prevent buffer overflows.
+  - **Error Handling**: Implement robust error handling to manage cases where input is invalid, providing clear messages to users and preventing system crashes or security breaches.
 
-5. **No Error Handling (`no_error_handling`)**
-   - **Purpose**: Detects async operations without error handling, risking silent failures in space systems.
-   - **Languages**: JavaScript (async/await).
-   - **Example**:
-     ```javascript
-     async function fetchData() { await fetch("url"); } // Flagged: no try/catch
-     ```
-     - Fix: Wrap in `try { ... } catch (e) { ... }`.
+- **External Reference**: 
+  - [OWASP Input Validation](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html)
+  - [Wikipedia Input Validation](https://en.wikipedia.org/wiki/Input_validation)
 
-6. **Unsafe File Operations (`unsafe_file_op`)**
-   - **Purpose**: Flags file operations without error checks, which could fail or be exploited via RF-injected paths.
-   - **Languages**: JavaScript (`fs.readFile`), Python (`open`), C (`fopen`).
-   - **Example**:
-     ```javascript
-     fs.readFile("data.txt"); // Flagged: no error handling
-     ```
-     - Fix: Use `.catch()` or try/catch.
 
-7. **Insufficient Logging (`insufficient_logging`)**
-   - **Purpose**: Ensures API endpoints or critical functions log activity, vital for tracing RF attacks in space.
-   - **Languages**: JavaScript (`app.get`), Python (`@app.route`), C (functions).
-   - **Example**:
-     ```python
-     @app.route("/data")
-     def get_data(): return "OK" // Flagged: no logging
-     ```
-     - Fix: Add `print("Data accessed")`.
 
-8. **Unsanitized Execution (`unsanitized_exec`)**
-   - **Purpose**: Detects command execution with unsanitized inputs, risking RF-driven command injection.
-   - **Languages**: JavaScript (`exec`), Python (`os.system`), C (`system`).
-   - **Example**:
-     ```javascript
-     exec(`echo ${userInput}`); // Flagged: injection risk
-     ```
-     - Fix: Use parameterized commands (e.g., `["echo", userInput]`).
+### Network Call
+- **Severity**: 3/5
+- **Description**: Network calls are essential for many applications but introduce several risks, particularly in environments with unreliable communications. These risks include latency, which can slow down real-time systems, external failure points where the program's success depends on network availability, and security vulnerabilities where communications can be intercepted or tampered with. In space or remote settings, network communications might be even more unreliable due to factors like distance, signal interference, or limited bandwidth. Therefore, it's crucial to design systems that can handle network failures gracefully and minimize dependency on network operations where possible. To mitigate these risks, developers should implement robust error handling, use caching or offline capabilities, secure communications with encryption, and design with redundancy to handle failures. In summary, while network calls are often necessary, they should be used judiciously, especially in critical or unreliable communication environments.
 
-9. **Exposed Secrets (`exposed_secrets`)**
-   - **Purpose**: Flags hardcoded secrets that could be extracted via RF attacks or memory dumps.
-   - **Languages**: JavaScript (`apiKey = "..."`), Python, C (`char* key = "..."`).
-   - **Example**:
-     ```javascript
-     const apiKey = "xyz123"; // Flagged: hardcoded
-     ```
-     - Fix: Use environment variables (`process.env.API_KEY`).
+- **Examples**:
+  - **C**: `socket(AF_INET, SOCK_STREAM, 0);`
+  - **Python**: `requests.get("http://api");`
+  - **JavaScript**: `fetch("http://api");`
 
-10. **Unrestricted CORS (`unrestricted_cors`)**
-    - **Purpose**: Identifies overly permissive CORS configs that could allow unauthorized RF clients (if web-exposed).
-    - **Languages**: JavaScript (`cors({ origin: "*" })`).
-    - **Example**:
-      ```javascript
-      app.use(cors({ origin: "*" })); // Flagged: unrestricted
-      ```
-      - Fix: Specify trusted origins (e.g., `origin: "trusted.sat"`).
+- **Remedies**:
+  - **Error Handling**: Implement try-catch blocks or equivalent mechanisms to handle network exceptions and provide meaningful error messages.
+  - **Timeout Settings**: Set appropriate timeouts for network operations to prevent the program from hanging indefinitely.
+  - **Caching**: Use caching mechanisms to store results of network calls and reduce the frequency of requests.
+  - **Offline Mode**: Provide an offline mode or fallback mechanisms when network operations fail.
+  - **Security Measures**: Ensure that all network communications are encrypted and authenticated to prevent eavesdropping and tampering.
 
-11. **Buffer Overflow Risk (`buffer_overflow_risk`)**
-    - **Purpose**: Flags unsafe string operations in C that could be exploited via RF-injected data.
-    - **Languages**: C (`strcpy`).
-    - **Example**:
-      ```c
-      strcpy(dest, src); // Flagged: overflow risk
-      ```
-      - Fix: Use `strncpy` with length checks.
+- **External Reference**: 
+  - [Google Network Latency](https://developers.google.com/web/fundamentals/performance/rail)
 
-These rules enhance space-proofing by catching vulnerabilities that static analysis can identify, complementing runtime checks like authentication and input sanitization for a fully secure system.
 
-## Zero External Dependencies
+### Weak Crypto
+- **Severity**: 4/5
+- **Description**: Using weak cryptographic methods can compromise system security, especially in environments like space missions where data integrity and confidentiality are paramount. Weak algorithms, such as MD5 for hashing or simple random number generators, have known vulnerabilities and can be broken easily. Additionally, weak crypto can fail due to bit-flips from cosmic radiation, altering data in memory, which is critical in high-radiation environments. To ensure security, use modern algorithms like AES for encryption, SHA-256 for hashing, and cryptographically secure pseudo-random number generators for key generation. Implement proper key management, regular updates, and error detection to safeguard against attacks and environmental threats. In summary, weak cryptography poses both security and reliability risks, necessitating robust practices.
+
+
+- **Examples**:
+  - **C**: `int r = rand();`
+  - **Python**: `hashlib.md5(data);`
+  - **JavaScript**: `Math.random();`
+
+- **Remedies**:
+  - **Use Strong Algorithms**: Replace weak algorithms like MD5 with stronger ones like SHA-256 or SHA-3.
+  - **Secure Randomness**: Use CSPRNGs for generating keys and other sensitive data.
+  - **Regular Updates**: Keep cryptographic libraries and software up-to-date to benefit from the latest security patches.
+  - **Key Management**: Implement proper key management practices, including secure storage and periodic rotation.
+  - **Error Detection**: Use techniques like checksums or digital signatures to detect any alterations in data due to bit-flips or other errors.
+
+
+- **External Reference**: 
+  - [NIST Cryptography Guidelines](https://csrc.nist.gov/)
+  - [OWASP Cryptographic Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html)
+
+### Unsafe File Op
+- **Severity**: 3/5
+- **Description**: File operations, if not handled properly, can lead to errors and security vulnerabilities, such as crashes from unhandled errors, directory traversal attacks from unvalidated paths, and processing errors from malformed data. In critical systems like space missions, these issues can cause data corruption or loss with severe consequences. To mitigate, always check return values, validate file paths, verify data integrity, manage permissions, and implement backups. Safe file operations require diligent practices to prevent system failures and breaches, ensuring reliability and security.
+
+- **Examples**:
+  - **C**: `fopen("file.txt", "r");`
+  - **Python**: `open("file.txt", "r");`
+  - **JavaScript**: `fs.readFile("file.txt");`
+
+- **Remedies**:
+  - **Error Checking**: Always check the return values of file operation functions and handle errors gracefully.
+  - **Path Sanitization**: Ensure that file paths are validated and sanitized to prevent directory traversal or access to unauthorized files.
+  - **Data Validation**: Verify that the data read from the file is in the expected format and is not corrupted.
+  - **Permissions Management**: Set appropriate permissions for file access to prevent unauthorized modifications or disclosures.
+  - **Redundancy and Backup**: Implement backup and redundancy mechanisms for critical files to handle data loss or corruption.
+
+- **External Reference**: 
+  - [SEI CERT File Handling](https://wiki.sei.cmu.edu/confluence/display/c)
+  - [OWASP File Upload Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html)
+
+### Unsanitized Exec
+- **Severity**: 5/5
+- **Description**: Executing untrusted input can lead to arbitrary code execution, a severe vulnerability known as command injection, allowing attackers to control the system. This can result in data theft or system compromise, with catastrophic consequences in space systems. To prevent, avoid dynamic execution where possible, sanitize inputs if necessary, limit process privileges, whitelist safe inputs, and use secure alternatives. Careful input handling and secure coding practices are essential to mitigate this risk, ensuring system integrity and security.
+
+- **Examples**:
+  - **C**: `system(user_input);`
+  - **Python**: `os.system(f"echo {input}");`
+  - **JavaScript**: `exec(`echo ${input}`);`
+
+- **Remedies**:
+  - **Avoid Dynamic Execution**: Refrain from using functions that execute arbitrary code or commands based on user input.
+  - **Input Sanitization**: If dynamic execution is unavoidable, sanitize the input to remove any potentially harmful characters or commands.
+  - **Least Privilege**: Run the program or the part that executes commands with the least privileges necessary.
+  - **Whitelisting**: Only allow specific, known-safe inputs or commands to be executed.
+  - **Secure Alternatives**: Use secure alternatives for tasks that might otherwise require dynamic execution, such as using template engines for generating output.
+
+- **External Reference**: 
+  - [OWASP Command Injection](https://owasp.org/www-community/attacks/Command_Injection)
+  - [OS Command Injection](https://cwe.mitre.org/data/definitions/78.html)
+  - [Imperva Command Injection](https://www.imperva.com/learn/application-security/command-injection/)
+
+### Exposed Secrets
+- **Severity**: 5/5
+- **Description**: Exposing secrets like API keys or passwords in code or files is a critical risk, easily accessed via code inspection or memory dumps, compromising security. In secure environments like space missions, this can lead to unauthorized access and mission disruption. Protect secrets by using environment variables, secret management tools like HashiCorp Vault, encrypted storage, strict access controls, and regular audits. Proper secrets management is vital for maintaining system security and integrity, especially in high-stakes settings.
+
+- **Examples**:
+  - **C**: `char* key = "xyz123";`
+  - **Python**: `api_key = "xyz123"`
+  - **JavaScript**: `const apiKey = "xyz123";`
+
+- **Remedies**:
+  - **Use Environment Variables**: Store sensitive information as environment variables that are not committed to version control.
+  - **Secret Vaults**: Utilize secret management tools to securely store and retrieve secrets.
+  - **Encrypted Storage**: Store secrets in encrypted files or databases, accessible only through secure channels.
+  - **Access Controls**: Implement strict access controls to limit who can view or modify secrets.
+  - **Regular Audits**: Periodically audit the code and configuration files to ensure no secrets are inadvertently exposed.
+
+- **External Reference**: 
+  - [Secrets Management](https://www.beyondtrust.com/resources/glossary/secrets-management)
+  - [AWS Secrets Management](https://aws.amazon.com/secrets-manager/)
+
+### Buffer Overflow Risk
+- **Severity**: 5/5 (C-specific, lower in Python/JS)
+- **Description**: Buffer overflow, primarily affecting C and C++, occurs when data overwrites memory beyond buffer size, causing crashes or enabling code execution. In critical systems like space missions, this can lead to system failures or security breaches. Prevent by using bounded functions, checking buffer sizes, managing memory, using compiler flags, and static analysis tools. This risk is lower in Python and JavaScript due to managed memory, highlighting the importance of language choice and careful coding in vulnerable languages.
+
+- **Examples**:
+  - **C**: `strcpy(dest, src);`
+  - **Python**: N/A (managed memory)
+  - **JavaScript**: N/A (managed memory)
+
+- **Remedies**:
+  - **Use Bounded Functions**: In C, use functions like strncpy and snprintf that allow specifying the buffer size.
+  - **Check Buffer Sizes**: Always ensure that the source data is smaller than the destination buffer.
+  - **Memory Management**: Use dynamic memory allocation with proper size calculations.
+  - **Compiler Flags**: Use compiler flags that enable buffer overflow checks, such as -fstack-protector in GCC.
+  - **Static Analysis**: Use static analysis tools to detect potential buffer overflow vulnerabilities in the code.
+
+- **External Reference**: 
+  - [Imperva Buffer Overflow](https://www.imperva.com/learn/application-security/buffer-overflow/)
+  - [Wiki Buffer Overflow](https://en.wikipedia.org/wiki/Buffer_overflow)
+
+### Insufficient Logging
+- **Severity**: 2/5
+- **Description**: Insufficient logging can hinder debugging, security incident investigation, and performance monitoring in critical systems like space missions. Comprehensive logging is crucial for post-incident analysis, especially where real-time intervention is limited. However, over-logging can flood systems, impacting performance. Best practices include logging key events, using log levels, securing log storage, and regular reviews. While logging might seem minor, insufficient practices can severely impact system maintenance and security, necessitating balanced approaches.
+
+
+- **Examples**:
+  - **C**: `int main() { return 0; }` (no logs)
+  - **Python**: `def main(): pass` (no logs)
+  - **JavaScript**: `app.get("/data", () => "OK");` (no logs)
+
+- **Remedies**:
+  - **Implement Logging Frameworks**: Use logging libraries or frameworks that allow for configurable log levels and outputs.
+  - **Log Critical Events**: Ensure that all critical system events, such as errors, security incidents, and major state changes, are logged.
+  - **Avoid Over-Logging**: Configure log levels to avoid logging excessive, non-critical information that could clutter logs and impact performance.
+  - **Secure Log Storage**: Store logs in a secure manner, protecting them from tampering or unauthorized access.
+  - **Regular Review**: Schedule regular reviews of logs to detect any issues or anomalies.
+
+- **External Reference**: 
+  - [OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html)
+
+### Unrestricted CORS
+- **Severity**: 4/5 (JS only)
+- **Description**: Overly permissive CORS settings allow unauthorized access in web-exposed systems. Restrict origins explicitly. Unrestricted Cross-Origin Resource Sharing (CORS) happens when a server lets any website access its resources, which can be risky for web applications open to the internet. This can allow attackers to trick users into unwanted actions (like Cross-Site Request Forgery, or CSRF) or access sensitive data, potentially leading to privacy breaches. An unexpected detail is that this risk is specific to JavaScript-based web applications, highlighting the need for careful configuration in web development.
+
+- **Examples**:
+  - **C**: N/A
+  - **Python**: N/A
+  - **JavaScript**: `app.use(cors({ origin: "*" }));`
+
+- **Remedies**:
+  - **Restrict Access**: Only allow trusted websites to access your server by listing them, like in Express.js:
+  ```javascript
+  const express = require('express');
+  const app = express();
+  const cors = require('cors');
+
+  app.use(cors({
+    origin: ['https://example.com', 'https://sub.example.com']
+  }));
+  ```
+  - **Add Security**: Use secure cookies and validate request headers to prevent attacks.
+
+- **External Reference**: 
+  - [OWASP CORS Security](https://owasp.org/www-community/attacks/CORS_OriginHeaderScrutiny)
+  - [MDN CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
+  - [W3C CORS](https://fetch.spec.whatwg.org/#http-cors-protocol)
+
+### Async Risk
+- **Severity**: 4/5 (JS only)
+- **Description**: Asynchronous operations in JavaScript, like fetching data, can be unpredictable in timing, which is risky for systems needing instant responses, such as real-time apps for live updates. This unpredictability can delay actions or cause errors, affecting user experience or system reliability. An unexpected detail is that this risk might apply to JavaScript in embedded systems, not just web apps, broadening its relevance beyond typical use cases.
+
+- **Examples**:
+  - **C**: N/A
+  - **Python**: N/A
+  - **JavaScript**: `async function foo() { await fetch(); }`
+
+- **Remedies**:
+  - **Minimize Async Use**: Avoid async operations in critical tasks where timing is key.  
+  - **Structure Code**: Use promises and async/await to make async code more predictable.  
+  - **Offload Tasks**: Use Web Workers to handle heavy tasks without slowing down the main program.  
+  - **Set Time Limits**: Add timeouts to ensure the system stays responsive.
+
+- **External Reference**: [MDN Async JS](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Async_JS)
+
+### Checksum Mismatch
+- **Severity**: 4/5
+- **Description**: Failing to verify checksums or hashes on data, especially from RF sources, risks accepting corrupted or tampered input, compromising integrity. In space missions, data transmitted over long distances is susceptible to corruption due to noise or interference, and tampering could lead to incorrect decisions. Always validate data authenticity using checksums or hashes to ensure integrity, crucial for mission-critical communications, applicable across all languages for data handling.  
+
+- **Code Examples**:
+  - **C**: `recv_data(buf); /* no checksum check */`
+  - **Python**: `data = socket.recv(1024) # no hash validation`
+  - **JavaScript**: `fetch("data").then(d => use(d)); // no integrity check`
+
+- **Remedies**:
+  - Create and verify checksums with the spc `--create-sums` argument `space-proof-code -cs`
+  - In code verify, e.g., in C: 
+  ```c
+    if (verify_checksum(data, expected) != OK) handle_error();
+  ```
+
+- **External Reference**: 
+  - [OWASP Data Integrity](https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures/)
+  - [What is Data Integrity? Why You Need It & Best Practices](https://www.qlik.com/us/data-management/data-integrity) provides best practices.
+
+
+
+### Unchecked Function Return Critical
+- **Severity**: 5/5
+- **Description**: Unchecked return values from critical functions pose a severe risk in programming, particularly in critical systems where reliability and security are paramount. Critical functions, such as those involved in cryptography, network operations, file handling, or system calls, often return status information that indicates whether the operation was successful or not. Failing to check these return values can lead to silent failures, where the program continues to operate under the assumption that the function call was successful, when in reality, it may have failed or only partially succeeded. This can result in data corruption, security vulnerabilities, or system instability.
+In the context of space missions, where operations are often time-critical and communication is limited, such failures can have catastrophic consequences. For instance, if a critical communication function fails to send a command and this failure goes unchecked, the mission could be compromised without any indication to the operators.
+Therefore, it is essential to always validate the return values of critical functions and handle any errors or exceptions appropriately to ensure the robustness and security of the system.
+
+- **Examples**:
+  - **C**: `send(sock, data, len, 0);` (return not checked)
+  - **Python**: `requests.get("https://api")` (status not checked)
+  - **JavaScript**: `fetch("https://api");` (response not validated)
+
+- **Remedies**:
+  - **Check Return Values**: Always check the return values of critical functions and handle any errors indicated by these values.
+  - **Error Handling**: Implement robust error handling mechanisms, such as using try-catch blocks in languages that support exceptions, to manage and respond to failures.
+  - **Logging**: Log errors or exceptions to facilitate debugging and post-incident analysis.
+  - **Redundancy**: Design the system with redundancy to handle failures gracefully, ensuring that the system can recover or operate in a degraded mode if a critical function fails.
+
+- **External Reference**: 
+  - [MITRE CWE-252: Unchecked Return Value](https://cwe.mitre.org/data/definitions/252.html)
+  - [CERT Secure Coding: Error Handling Comprehensive Guidelines](https://www.securecoding.cert.org/confluence/pages/viewpage.action?pageId=126485238)
+  - [Python Documentation: Error Handling Best Practices](https://docs.python.org/3/library/exceptions.html)
+  - [MDN Web Docs: Error Handling in JavaScript Detailed Guide](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Async_await#error_handling)
+
+
+# Zero External Dependencies
 - **Code from scratch**: We write all code from scratch to avoid potential issues introduced with a dependency chain. By skipping external libraries and frameworks, we dodge the risk of bugs, security holes, or breaking changes sneaking in from someone else’s code.
 
-## Limitations
+# Limitations
 - **Regex-Based**: May miss complex cases (e.g., comments, nested scopes) without a full parser.
 - **Language-Specific**: Some rules (e.g., pointers) apply only to C/C++.
 - **False Positives**: Patterns like `while (true)` with a `break` might still flag.
 
-## Contributing
+# Contributing
 - Report issues or suggest features via GitHub.
 - To extend support for other languages, modify `LANGUAGE_PATTERNS` in `lib/scanner.js`.
 
-## License
+# License
 MIT License - see [LICENSE](LICENSE) for details.
 
-## Author
+# Author
 PuterVision <code@putervision.com> - https://putervision.com

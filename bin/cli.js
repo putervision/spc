@@ -18,7 +18,7 @@
  */
 
 const fs = require('fs').promises; // Filesystem module for async directory checks
-const { scanCodebase } = require('../lib/scanner'); // Import core scanning logic
+const { scanCodebase, PATTERN_INFO } = require('../lib/scanner'); // Import core scanning logic
 
 const packageJson = require('../package.json'); // Import package.json for version info
 
@@ -102,6 +102,7 @@ async function main() {
  * @param {boolean} createSums - Enables creation of check sums for files scanned.
  */
 async function scanDirectory(directory, createSums = false) {
+  const startTime = Date.now();
   // Check if the directory exists asynchronously
   const dirExists = await fs
     .access(directory)
@@ -129,29 +130,50 @@ async function scanDirectory(directory, createSums = false) {
     }
 
     let totalIssues = 0;
+    let totalSeverity = 0;
+    const issueCounts = {};
     results.forEach(({ file, language, issues }) => {
       console.log(`\nAnalyzing ${file} (${language ? language : 'n/a'})...`); // Header for each file
       if (issues?.length > 0) {
         totalIssues += issues.length;
         // Report issues if any are found, with details for remediation
         console.log(`Issues in ${file} (${issues.length}):`);
-        console.log(`
-+---------+--------------------+
-| Line    | Issue              |
-+---------+--------------------+
-        `);
+        const newIssues = [];
         issues.forEach((issue) => {
-          console.log(`${issue.split('\n')[0]}`);
+          const severity = PATTERN_INFO[issue.issueType]?.severity ?? 0;
+          const url = PATTERN_INFO[issue.issueType]?.url ?? 'N/A';
+
+          totalSeverity += severity;
+          newIssues.push({
+            line: issue.lineNum,
+            severity,
+            issue: issue.issueType,
+            data: issue.message.split('\n')[0]?.substring(0, 55),
+            //info: url
+          });
+          if (!issueCounts[issue.issueType]) {
+            issueCounts[issue.issueType] = {
+              severity,
+              total: 1,
+              info: url,
+            };
+          } else {
+            issueCounts[issue.issueType].total++;
+          }
         });
-        console.log(`
-+---------+--------------------+
-        `);
+        console.table(newIssues);
       } else {
         console.log('  No issues found.');
       }
     });
 
-    console.log(`\nTotal issues discovered: ${totalIssues}`);
+    console.table(issueCounts);
+    const end = Date.now();
+    const timeDiff = (end - startTime) / 1000;
+    console.log(`Scanning complete in ${timeDiff} seconds`);
+    console.log(
+      `Total severity: ${totalSeverity} - Total issues: ${totalIssues} - Risk Level: ${(totalSeverity / totalIssues).toFixed(2)} / 5.00`
+    );
   } catch (err) {
     console.error(`Error during scan: ${err.message}`);
   }
