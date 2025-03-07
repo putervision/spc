@@ -32,7 +32,7 @@ Example usage for scanning code:
 space-proof-code /path/to/code
 ```
 Example output report of issues found:
-![Example Image](./assets/example_report.png "An example image")
+![Example SPC Report](https://raw.githubusercontent.com/putervision/spc/refs/tags/1.1.20/assets/example_report.png)
 
 # Command Arguments
 `space-proof-code|spc [/path/to/code][-cs]|[-v]|[-h]`
