@@ -93,9 +93,9 @@ describe('scanCodebase', () => {
     expect(results[0].file).toBe('/mock/main.c');
     expect(results[0].language).toBe('c');
 
-    expect(results[0].issues[2].lineNum).toEqual(2);
-    expect(results[0].issues[2].issueType).toContain("multiple_returns");
-    expect(results[0].issues[2].message).toContain('int compute(int x)');
+    expect(results[0].issues[1].lineNum).toEqual(2);
+    expect(results[0].issues[1].issueType).toContain("multiple_returns");
+    expect(results[0].issues[1].message).toContain('int compute(int x)');
   });
 
   it('reports long functions in JavaScript', async () => {

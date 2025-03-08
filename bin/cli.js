@@ -18,14 +18,37 @@
  */
 
 const fs = require('fs').promises; // Filesystem module for async directory checks
-const { scanCodebase, PATTERN_INFO } = require('../lib/scanner'); // Import core scanning logic
+const { scanCodebase } = require('../lib/scanner'); // Import core scanning logic
+const { PATTERN_INFO } = require('../lib/info');
 
 const packageJson = require('../package.json'); // Import package.json for version info
 
 // CLI metadata
 const CLI_NAME = 'space-proof-code';
 const VERSION = packageJson.version;
-const IGNORE_PATTERNS_DEFAULT = ['node_modules', '__pycache__', '.git'];
+const IGNORE_PATTERNS_DEFAULT = [
+  'node_modules[/\\\\]', // JS/TS: Excludes dependency dir, matches "node_modules/lib" or "node_modules\\lib"
+  '__pycache__[/\\\\]', // Python: Excludes bytecode cache, matches "__pycache__/module.pyc" or "__pycache__\\module.pyc"
+  '\.git[/\\\\]', // All: Excludes Git metadata, matches ".git/hooks/pre-commit" or ".git\\hooks\\pre-commit"
+  '\.svn[/\\\\]', // All: Excludes Subversion metadata, matches ".svn/entries" or ".svn\\entries"
+  'dist[/\\\\]', // JS/TS: Excludes build output, matches "dist/main.js" or "dist\\main.js"
+  'build[/\\\\]', // Java, C/C++, Rust: Excludes build output, matches "build/main.o" or "build\\main.o"
+  'target[/\\\\]', // Rust, Java: Excludes build output, matches "target/debug/main" or "target\\debug\\main"
+  '\.idea[/\\\\]', // Java: Excludes IntelliJ metadata, matches ".idea/workspace.xml" or ".idea\\workspace.xml"
+  '*.o', // C/C++: Excludes object files, matches "main.o" (basename)
+  '*.obj', // C/C++: Excludes Windows object files, matches "main.obj" (basename)
+  '*.class', // Java: Excludes compiled class files, matches "MyClass.class" (basename)
+  '*.pyc', // Python: Excludes bytecode files, matches "module.pyc" (basename)
+  '*.pyo', // Python: Excludes optimized bytecode, matches "module.pyo" (basename)
+  '*.so', // C/C++, Rust: Excludes shared objects, matches "lib.so" (basename)
+  '*.dylib', // C/C++, Rust: Excludes macOS dynamic libs, matches "lib.dylib" (basename)
+  '*.dll', // C/C++: Excludes Windows dynamic libs, matches "app.dll" (basename)
+  '\.vscode[/\\\\]', // All: Excludes VS Code metadata, matches ".vscode/settings.json" or ".vscode\\settings.json"
+  '\.DS_Store', // All (macOS): Excludes Finder metadata, matches ".DS_Store" (full path or basename)
+  '*.log', // All: Excludes log files, matches "app.log" (basename)
+  'vendor[/\\\\]', // Go: Excludes dependency dir, matches "vendor/golang.org/x/tool" or "vendor\\golang.org\\x\\tool"
+  'Godeps[/\\\\]', // Go: Excludes legacy dependency dir, matches "Godeps/_workspace" or "Godeps\\_workspace"
+];
 const IGNORE_PATTERNS = process.env.IGNORE_PATTERNS || IGNORE_PATTERNS_DEFAULT;
 
 /**
@@ -132,12 +155,14 @@ async function scanDirectory(directory, createSums = false) {
     let totalIssues = 0;
     let totalSeverity = 0;
     const issueCounts = {};
-    results.forEach(({ file, language, issues }) => {
-      console.log(`\nAnalyzing ${file} (${language ? language : 'n/a'})...`); // Header for each file
+    results.forEach(({ file, language, issues, relativePath }) => {
+      console.log(
+        `\nAnalyzing ${relativePath} (${language ? language : 'n/a'})`
+      ); // Header for each file
       if (issues?.length > 0) {
         totalIssues += issues.length;
         // Report issues if any are found, with details for remediation
-        console.log(`Issues in ${file} (${issues.length}):`);
+        console.log(`Issues found: ${issues.length}`);
         const newIssues = [];
         issues.forEach((issue) => {
           const severity = PATTERN_INFO[issue.issueType]?.severity ?? 0;
@@ -145,11 +170,13 @@ async function scanDirectory(directory, createSums = false) {
 
           totalSeverity += severity;
           newIssues.push({
-            line: issue.lineNum,
-            severity,
             issue: issue.issueType,
-            data: issue.message.split('\n')[0]?.substring(0, 55),
-            //info: url
+            severity,
+            line: issue.lineNum,
+            ['path to issue']: issue.lineNum
+              ? `${relativePath}:${issue.lineNum}`
+              : issue.message.split('\n')[0]?.substring(0, 55),
+            //info: url,
           });
           if (!issueCounts[issue.issueType]) {
             issueCounts[issue.issueType] = {

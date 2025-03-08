@@ -4,18 +4,26 @@
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://github.com/putervision/spc)
 
 
-`@putervision/spc` is a command-line tool that analyzes codebases for performance and security issues, enforcing space-proofing principles inspired by NASA's Power of Ten rules for safety-critical software. Supporting JavaScript/TypeScript (`.js`, `.ts`), Python (`.py`), C/C++ (`.c`, `.cpp`, `.h`), Go (`.go`), Rust (`.rs`), and Java (`.java`) files, it helps developers build robust, reliable code for high-stakes environments like space missions, identifying vulnerabilities and inefficiencies that could compromise mission-critical systems. Contact us via email: [code@putervision.com](mailto:code@putervision.com)
+`@putervision/spc` is a command-line tool that analyzes codebases for performance and security issues, enforcing space-proofing principles inspired by NASA's Power of Ten rules for safety-critical software. Supporting a variety of programming languages, it helps developers build robust, reliable code for high-stakes environments like space missions, identifying vulnerabilities and inefficiencies that could compromise mission-critical systems. 
 
+- **Supported Programming Languages**
+  - **JavaScript/TypeScript** (`.js`, `.ts`, `.jsx`, `.tsx`)
+  - **Python** (`.py`, `.pyw`)
+  - **C/C++** (`.c`, `.cpp`, `.cxx`, `.h`, `.hpp`)
+  - **Go** (`.go`)
+  - **Rust** (`.rs`)
+  - **Java** (`.java`)
 
-1. [Install & Usage](#installation)
-2. [Command Arguments](#command-arguments)
-3. [Performance and Reliability Rules](#performance-and-reliability-rules)
-4. [Security Rules](#security-rules)
-5. [Zero External Dependencies](#zero-external-dependencies)
-6. [Limitations](#limitations)
-7. [Contributing](#contributing)
-8. [License](#license)
-9. [Author](#author)
+- **Contents**
+  1. [Install & Usage](#installation)
+  2. [Command Arguments](#command-arguments)
+  3. [Performance and Reliability Rules](#performance-and-reliability-rules)
+  4. [Security Rules](#security-rules)
+  5. [Zero External Dependencies](#zero-external-dependencies)
+  6. [Limitations](#limitations)
+  7. [Contributing](#contributing)
+  8. [License](#license)
+  9. [Author](#author)
 
 
 # Install & Usage
@@ -54,7 +62,7 @@ space-proof-code /code/path
 
 # Performance and Reliability Rules
 
-`@putervision/spc` enforces a set of code quality rules inspired by NASA's Power of Ten guidelines, tailored to ensure performance, reliability, and maintainability in space-ready software. These checks go beyond security to identify patterns that could degrade system efficiency or stability in high-stakes environments like space missions. Below are the key rules applied across JavaScript/TypeScript (`.js`, `.ts`), Python (`.py`), C/C++ (`.c`, `.cpp`, `.h`), Go (`.go`), Rust (`.rs`), and Java (`.java`) files:
+`@putervision/spc` enforces a set of code quality rules inspired by NASA's Power of Ten guidelines, tailored to ensure performance, reliability, and maintainability in space-ready software. These checks go beyond security to identify patterns that could degrade system efficiency or stability in high-stakes environments like space missions. Below are the key rules applied across the supported programming languages:
 
 - [Recursion](#recursion)
 - [Dynamic Memory](#dynamic-memory)
@@ -347,6 +355,7 @@ space-proof-code /code/path
 
 # Security Rules
 `@putervision/spc` performs security-focused checks to protect space-bound code from vulnerabilities, such as RF-based API injection from neighboring satellites. These rules identify patterns that could compromise system integrity, confidentiality, or availability in high-stakes environments where human intervention isn’t possible. Below are the security rules enforced by the tool:
+
 - [Unsafe Input](#unsafe-input)
 - [Network Call](#network-call)
 - [Weak Crypto](#weak-crypto)
