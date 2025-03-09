@@ -1,6 +1,6 @@
 {
   "name": "@putervision/spc",
-  "version": "1.1.23",
+  "version": "1.1.24",
   "description": "Space Proof Code - Tools to facilitate space-proofing code by identifying performance and security related issues in JavaScript/TypeScript (`.js`, `.ts`), Python (`.py`), C/C++ (`.c`, `.cpp`, `.h`), Go (`.go`), Rust (`.rs`), and Java (`.java`) files",
   "main": "lib/scanner.js",
   "bin": {

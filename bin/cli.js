@@ -48,6 +48,23 @@ const IGNORE_PATTERNS_DEFAULT = [
   '*.log', // All: Excludes log files, matches "app.log" (basename)
   'vendor[/\\\\]', // Go: Excludes dependency dir, matches "vendor/golang.org/x/tool" or "vendor\\golang.org\\x\\tool"
   'Godeps[/\\\\]', // Go: Excludes legacy dependency dir, matches "Godeps/_workspace" or "Godeps\\_workspace"
+  '*.ali', // Ada: Excludes library info files, matches "main.ali" (basename)
+  'obj[/\\\\]', // Ada, C#: Excludes object dir, matches "obj/Debug/" or "obj\\Debug\\"
+  'bin[/\\\\]', // C#, Java: Excludes binary output, matches "bin/Release/" or "bin\\Release\\"
+  '*.exe', // C#, Fortran: Excludes executables, matches "program.exe" (basename)
+  '*.mod', // Fortran: Excludes module files, matches "module.mod" (basename)
+  '*.gem', // Ruby: Excludes gem files, matches "mygem.gem" (basename)
+  'vendor/bundle[/\\\\]', // Ruby: Excludes Bundler dependency dir, matches "vendor/bundle/ruby/" or "vendor\\bundle\\ruby\\"
+  '*.xcodeproj[/\\\\]', // Swift: Excludes Xcode project dirs, matches "MyApp.xcodeproj/" or "MyApp.xcodeproj\\"
+  '*.xcworkspace[/\\\\]', // Swift: Excludes Xcode workspace dirs, matches "MyApp.xcworkspace/" or "MyApp.xcworkspace\\"
+  'build.gradle[/\\\\]', // Kotlin: Excludes Gradle build dirs, matches "build.gradle/" or "build.gradle\\"
+  '*.luac', // Lua: Excludes compiled Lua bytecode, matches "script.luac" (basename)
+  'vendor/cache[/\\\\]', // PHP: Excludes Composer cache, matches "vendor/cache/" or "vendor\\cache\\"
+  '*.phar', // PHP: Excludes PHP archives, matches "app.phar" (basename)
+  'target/scala[/\\\\]', // Scala: Excludes Scala-specific build output, matches "target/scala-2.13/" or "target\\scala-2.13\\"
+  '*.hi', // Haskell: Excludes interface files, matches "Main.hi" (basename)
+  '*.o-boot', // Haskell: Excludes GHC bootstrap files, matches "Main.o-boot" (basename)
+  'dist-newstyle[/\\\\]', // Haskell: Excludes Cabal build dir, matches "dist-newstyle/build/" or "dist-newstyle\\build\\"
 ];
 const IGNORE_PATTERNS = process.env.IGNORE_PATTERNS || IGNORE_PATTERNS_DEFAULT;
 

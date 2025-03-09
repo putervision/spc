@@ -7,12 +7,22 @@
 `@putervision/spc` is a command-line tool that analyzes codebases for performance and security issues, enforcing space-proofing principles inspired by NASA's Power of Ten rules for safety-critical software. Supporting a variety of programming languages, it helps developers build robust, reliable code for high-stakes environments like space missions, identifying vulnerabilities and inefficiencies that could compromise mission-critical systems. 
 
 - **Supported Programming Languages**
-  - **JavaScript/TypeScript** (`.js`, `.ts`, `.jsx`, `.tsx`)
-  - **Python** (`.py`, `.pyw`)
+  - **Ada** (`.ada`, `.adb`, `.ads`)
   - **C/C++** (`.c`, `.cpp`, `.cxx`, `.h`, `.hpp`)
+  - **C# (CSharp)** (`.cs`)
+  - **Fortran** (`.f`, `.f90`, `.f95`, `.f03`)
   - **Go** (`.go`)
-  - **Rust** (`.rs`)
+  - **Haskell** (`.hs`, `.lhs`)
   - **Java** (`.java`)
+  - **JavaScript/TypeScript** (`.js`, `.ts`, `.jsx`, `.tsx`)
+  - **Kotlin** (`.kt`)
+  - **Lua** (`.lua`)
+  - **PHP** (`.php`, `.phtml`)
+  - **Python** (`.py`, `.pyw`)
+  - **Ruby** (`.rb`)
+  - **Rust** (`.rs`)
+  - **Scala** (`.scala`, `.sc`)
+  - **Swift** (`.swift`)
 
 - **Contents**
   1. [Install & Usage](#installation)
