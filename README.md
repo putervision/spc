@@ -58,7 +58,7 @@ Example usage for scanning code:
 space-proof-code /path/to/code
 ```
 Example output report of issues found:
-![Example SPC Report](https://raw.githubusercontent.com/putervision/spc/refs/tags/1.2.0/assets/example_report.png)
+![Example SPC Report](https://raw.githubusercontent.com/putervision/spc/refs/tags/1.3.0/assets/example_report.png)
 
 # Command Arguments
 `space-proof-code|spc [/path/to/code] [--format table|json|md] [-o report_file] [--max-severity N] [--fail-on-issue] [-cs] [-v] [-h]`
@@ -678,6 +678,53 @@ Therefore, it is essential to always validate the return values of critical func
   - [Python Documentation: Error Handling Best Practices](https://docs.python.org/3/library/exceptions.html)
   - [MDN Web Docs: Error Handling in JavaScript Detailed Guide](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Async_await#error_handling)
 
+
+# Programmatic Usage
+
+You can use `spc` programmatically in Node.js applications:
+
+```javascript
+const { scanCodebase } = require('@putervision/spc/lib/scanner');
+const { formatResults } = require('@putervision/spc/lib/formatter');
+
+async function analyzeProject() {
+  const results = await scanCodebase('./src', false, []);
+  console.log(`Scanned ${results.length} files.`);
+  
+  const markdownReport = formatResults(results, { format: 'md' });
+  console.log(markdownReport);
+}
+
+analyzeProject().catch(console.error);
+```
+
+### API Reference
+
+#### `scanCodebase(directory, createSums, ignorePatterns)`
+- `directory` *(string)*: Absolute or relative directory path to scan.
+- `createSums` *(boolean, optional)*: Generate `checksums.sha256.txt` manifest (default: `false`).
+- `ignorePatterns` *(string[], optional)*: Custom exclusion rules array.
+- **Returns**: `Promise<Array<{ file, relativePath, language, issues }>>`
+
+---
+
+# Rule Coverage by Language
+
+| Rule Name | JS/TS | Python | C/C++ | Go | Rust | Java | Ada | C# | Fortran | Bash | Ruby | Swift | Kotlin | Lua | PHP | Scala | Haskell | Zig | Julia | Elixir |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| `recursion` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `unbounded_loops` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `dynamic_memory` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `long_functions` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `assertion_density` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `macro_count` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `multiple_returns` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `unsafe_input` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `exposed_secrets` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `unsanitized_exec` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `weak_crypto` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+
+---
 
 # Zero External Dependencies
 - **Code from scratch**: We write all code from scratch to avoid potential issues introduced with a dependency chain. By skipping external libraries and frameworks, we dodge the risk of bugs, security holes, or breaking changes sneaking in from someone else’s code.

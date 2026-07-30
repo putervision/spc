@@ -8,75 +8,53 @@
  * - `space-proof-code /path/to/code` → Scans path and reports issues.
  * - `space-proof-code --format json -o report.json` → Outputs machine-readable JSON report to file.
  * - `space-proof-code --format md` → Outputs Markdown report table for CI summaries.
- * - `space-proof-code --max-severity 4` → Fails (exit code 1) if severity >= 4 detected.
+ * - `space-proof-code --max-severity 4` → Fails (exit code 1) if average severity >= 4 detected.
+ * - `space-proof-code --max-issue-severity 4` → Fails if any single issue has severity >= 4.
+ * - `space-proof-code --exclude node_modules,dist` → Excludes patterns from scan.
+ * - `space-proof-code --quiet` → Suppresses non-essential console logs.
  * - `space-proof-code --help` → Displays help menu.
  * - `space-proof-code --version` → Displays tool version.
  */
 
 const fs = require('fs').promises;
-const path = require('path');
 const { scanCodebase } = require('../lib/scanner');
 const { PATTERN_INFO } = require('../lib/info');
 const { formatResults } = require('../lib/formatter');
+const { buildIgnorePatterns } = require('../lib/ignore');
+const { loadConfig } = require('../lib/config');
 const packageJson = require('../package.json');
 
 const CLI_NAME = 'space-proof-code';
 const VERSION = packageJson.version;
 
-const IGNORE_PATTERNS_DEFAULT = [
-  'node_modules[/\\\\]',
-  '__pycache__[/\\\\]',
-  '\\.git[/\\\\]',
-  '\\.svn[/\\\\]',
-  'dist[/\\\\]',
-  'build[/\\\\]',
-  'target[/\\\\]',
-  '\\.idea[/\\\\]',
-  '*.o',
-  '*.obj',
-  '*.class',
-  '*.pyc',
-  '*.pyo',
-  '*.so',
-  '*.dylib',
-  '*.dll',
-  '\\.vscode[/\\\\]',
-  '\\.DS_Store',
-  '*.log',
-  'vendor[/\\\\]',
-  'obj[/\\\\]',
-  'bin[/\\\\]',
-  '*.exe',
-  '*.mod',
-  '*.gem',
-  '*.zig-cache[/\\\\]',
-  'zig-out[/\\\\]',
-  '_build[/\\\\]',
-];
-
-const IGNORE_PATTERNS = process.env.IGNORE_PATTERNS
-  ? process.env.IGNORE_PATTERNS.split(',')
-  : IGNORE_PATTERNS_DEFAULT;
-
 function showHelp() {
   console.log(`
 ${CLI_NAME} v${VERSION} - Space Proof Code Tool (PuterVision)
 
+High-performance zero-dependency static analysis tool enforcing NASA Power of Ten
+reliability and security rules across 20 programming languages.
+
 Usage: ${CLI_NAME} [directory] [options]
 
 Options:
-  --help, -h            Display this help menu
-  --version, -v         Display the version number
-  --create-sums, -cs    Generates a checksum file in the scanned code path
-  --format <table|json|md> Output format (default: table)
-  -o, --output <file>   Save output report to specified file path
-  --max-severity <N>    Exit non-zero if total severity average or issue severity reaches N
-  --fail-on-issue       Exit non-zero if any space-proofing issues are found
+  --help, -h                  Display this help menu
+  --version, -V               Display the version number
+  --create-sums, -cs          Generates a checksum file in the scanned code path
+  --format <table|json|md>    Output format (default: table)
+  -o, --output <file>         Save output report to specified file path
+  --exclude <pattern>         Add extra ignore patterns (comma-separated or flag repeated)
+  --config <path>             Path to .spc.config.json configuration file
+  --progress, -p              Show scanning progress file by file
+  --quiet, -q                 Suppress standard log outputs (only output error logs)
+  --color / --no-color        Enable or disable ANSI colors in terminal output
+  --max-severity <N>          Exit non-zero if average severity risk level >= N
+  --max-issue-severity <N>    Exit non-zero if any single issue severity >= N
+  --fail-on-issue             Exit non-zero if any space-proofing issues are found
 
 Examples:
   ${CLI_NAME} /path/to/code
-  ${CLI_NAME} . --format json -o spc-report.json
-  ${CLI_NAME} . --format md
+  ${CLI_NAME} . --format json -o spc-report.json --exclude node_modules
+  ${CLI_NAME} . --format md --max-issue-severity 4
   ${CLI_NAME} --version
   `);
 }
@@ -88,7 +66,13 @@ async function main() {
   let format = 'table';
   let outputFile = null;
   let maxSeverityThreshold = null;
+  let maxIssueSeverityThreshold = null;
   let failOnIssue = false;
+  let extraExcludes = [];
+  let configPath = null;
+  let showProgress = false;
+  let quiet = false;
+  let color = true;
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -96,7 +80,7 @@ async function main() {
       showHelp();
       return;
     }
-    if (arg === '--version' || arg === '-v') {
+    if (arg === '--version' || arg === '-v' || arg === '-V') {
       console.log(`${CLI_NAME} v${VERSION}`);
       return;
     }
@@ -112,8 +96,39 @@ async function main() {
       outputFile = args[++i] || null;
       continue;
     }
+    if (arg === '--exclude') {
+      const val = args[++i];
+      if (val) {
+        extraExcludes.push(...val.split(','));
+      }
+      continue;
+    }
+    if (arg === '--config') {
+      configPath = args[++i] || null;
+      continue;
+    }
+    if (arg === '--progress' || arg === '-p') {
+      showProgress = true;
+      continue;
+    }
+    if (arg === '--quiet' || arg === '-q') {
+      quiet = true;
+      continue;
+    }
+    if (arg === '--no-color') {
+      color = false;
+      continue;
+    }
+    if (arg === '--color') {
+      color = true;
+      continue;
+    }
     if (arg === '--max-severity') {
       maxSeverityThreshold = parseFloat(args[++i]);
+      continue;
+    }
+    if (arg === '--max-issue-severity') {
+      maxIssueSeverityThreshold = parseFloat(args[++i]);
       continue;
     }
     if (arg === '--fail-on-issue') {
@@ -130,7 +145,13 @@ async function main() {
     format,
     outputFile,
     maxSeverityThreshold,
+    maxIssueSeverityThreshold,
     failOnIssue,
+    extraExcludes,
+    configPath,
+    showProgress,
+    quiet,
+    color,
   });
 }
 
@@ -140,7 +161,12 @@ async function scanDirectory(directory, options = {}) {
     format = 'table',
     outputFile = null,
     maxSeverityThreshold = null,
+    maxIssueSeverityThreshold = null,
     failOnIssue = false,
+    extraExcludes = [],
+    configPath = null,
+    showProgress = false,
+    quiet = false,
   } = options;
 
   const startTime = Date.now();
@@ -155,22 +181,31 @@ async function scanDirectory(directory, options = {}) {
     return;
   }
 
-  if (format === 'table' && !outputFile) {
+  const fileConfig = await loadConfig(configPath || directory);
+  const ignorePatterns = buildIgnorePatterns([
+    ...extraExcludes,
+    ...(fileConfig.ignorePatterns || []),
+  ]);
+
+  if (!quiet && format === 'table' && !outputFile) {
     console.log(`Scanning ${directory} for space-proofing issues...`);
     console.log(`- Version: ${VERSION}`);
     console.log(`- Create checksums: ${createSums}`);
+    if (showProgress) console.log(`- Progress mode: active`);
   }
 
   try {
-    const results = await scanCodebase(directory, createSums, IGNORE_PATTERNS);
+    const results = await scanCodebase(directory, createSums, ignorePatterns);
     const end = Date.now();
     const timeDiff = (end - startTime) / 1000;
 
     let totalIssues = 0;
     let totalSeverity = 0;
+    let maxFoundIssueSeverity = 0;
 
     if (results.length === 0) {
-      if (format === 'table') console.log('No files found to analyze.');
+      if (!quiet && format === 'table')
+        console.log('No files found to analyze.');
       return;
     }
 
@@ -184,23 +219,43 @@ async function scanDirectory(directory, options = {}) {
 
       if (outputFile) {
         await fs.writeFile(outputFile, formattedOutput, 'utf8');
-        console.log(`Report successfully saved to ${outputFile}`);
+        if (!quiet) console.log(`Report successfully saved to ${outputFile}`);
       } else {
         console.log(formattedOutput);
       }
+
+      results.forEach(({ issues }) => {
+        if (issues) {
+          issues.forEach((issue) => {
+            const sev = PATTERN_INFO[issue.issueType]?.severity ?? 0;
+            totalIssues++;
+            totalSeverity += sev;
+            if (sev > maxFoundIssueSeverity) maxFoundIssueSeverity = sev;
+          });
+        }
+      });
     } else {
       // Default table display
       const issueCounts = {};
       results.forEach(({ relativePath, language, issues }) => {
-        console.log(`\nAnalyzing ${relativePath} (${language || 'n/a'})`);
+        if (showProgress && !quiet) {
+          console.error(
+            `Scanned: ${relativePath} (${issues?.length || 0} issues)`
+          );
+        }
+
+        if (!quiet)
+          console.log(`\nAnalyzing ${relativePath} (${language || 'n/a'})`);
         if (issues?.length > 0) {
           totalIssues += issues.length;
-          console.log(`Issues found: ${issues.length}`);
+          if (!quiet) console.log(`Issues found: ${issues.length}`);
           const fileIssues = [];
           issues.forEach((issue) => {
             const severity = PATTERN_INFO[issue.issueType]?.severity ?? 0;
             const url = PATTERN_INFO[issue.issueType]?.url ?? 'N/A';
             totalSeverity += severity;
+            if (severity > maxFoundIssueSeverity)
+              maxFoundIssueSeverity = severity;
 
             fileIssues.push({
               issue: issue.issueType,
@@ -217,23 +272,25 @@ async function scanDirectory(directory, options = {}) {
               issueCounts[issue.issueType].total++;
             }
           });
-          console.table(fileIssues);
+          if (!quiet) console.table(fileIssues);
         } else {
-          console.log('  No issues found.');
+          if (!quiet) console.log('  No issues found.');
         }
       });
 
-      if (Object.keys(issueCounts).length > 0) {
+      if (!quiet && Object.keys(issueCounts).length > 0) {
         console.table(issueCounts);
       }
 
-      console.log(`\n${CLI_NAME} v${VERSION}`);
-      console.log(`Scanning complete in ${timeDiff} seconds`);
-      const riskLevel =
-        totalIssues > 0 ? (totalSeverity / totalIssues).toFixed(2) : '0.00';
-      console.log(
-        `Total severity: ${totalSeverity} - Total issues: ${totalIssues} - Risk Level: ${riskLevel} / 5.00`
-      );
+      if (!quiet) {
+        console.log(`\n${CLI_NAME} v${VERSION}`);
+        console.log(`Scanning complete in ${timeDiff} seconds`);
+        const riskLevel =
+          totalIssues > 0 ? (totalSeverity / totalIssues).toFixed(2) : '0.00';
+        console.log(
+          `Total severity: ${totalSeverity} - Total issues: ${totalIssues} - Risk Level: ${riskLevel} / 5.00`
+        );
+      }
 
       if (outputFile) {
         const mdOutput = formatResults(results, {
@@ -243,7 +300,7 @@ async function scanDirectory(directory, options = {}) {
           timeDiff,
         });
         await fs.writeFile(outputFile, mdOutput, 'utf8');
-        console.log(`Report summary saved to ${outputFile}`);
+        if (!quiet) console.log(`Report summary saved to ${outputFile}`);
       }
     }
 
@@ -251,10 +308,12 @@ async function scanDirectory(directory, options = {}) {
     const avgRisk = totalIssues > 0 ? totalSeverity / totalIssues : 0;
     if (
       (maxSeverityThreshold !== null && avgRisk >= maxSeverityThreshold) ||
+      (maxIssueSeverityThreshold !== null &&
+        maxFoundIssueSeverity >= maxIssueSeverityThreshold) ||
       (failOnIssue && totalIssues > 0)
     ) {
       console.error(
-        `\nCI Quality Gate Failed: threshold exceeded (Issues: ${totalIssues}, Risk Level: ${avgRisk.toFixed(2)})`
+        `\nCI Quality Gate Failed: threshold exceeded (Issues: ${totalIssues}, Avg Risk: ${avgRisk.toFixed(2)}, Max Issue Severity: ${maxFoundIssueSeverity})`
       );
       process.exitCode = 1;
     }

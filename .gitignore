@@ -5,3 +5,4 @@ coverage
 # vision-memory-mcp local database
 .vision-memory-mcp/
 .env
+checksums.sha256.txt
