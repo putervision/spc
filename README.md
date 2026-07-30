@@ -1,20 +1,25 @@
-# Space Proof Code 
-## Tools to facilitate space-proofing code by identifying performance and security related issues.
+# Space Proof Code (`@putervision/spc`)
+## Zero-dependency static analysis enforcing NASA Power of Ten rules across 20 programming languages.
 
+[![npm version](https://img.shields.io/npm/v/@putervision/spc.svg)](https://www.npmjs.com/package/@putervision/spc)
+[![Website](https://img.shields.io/badge/Website-putervision.com-06b6d4.svg)](https://putervision.com)
+[![License](https://img.shields.io/npm/l/@putervision/spc.svg)](./LICENSE)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://github.com/putervision/spc)
 
+`@putervision/spc` is a high-performance command-line static analysis tool that analyzes codebases for reliability and security issues, enforcing space-proofing principles inspired by NASA's Power of Ten rules for safety-critical software. Supporting 20 programming languages, it helps developers build robust, reliable code for high-stakes environments. 
 
-`@putervision/spc` is a command-line tool that analyzes codebases for performance and security issues, enforcing space-proofing principles inspired by NASA's Power of Ten rules for safety-critical software. Supporting a variety of programming languages, it helps developers build robust, reliable code for high-stakes environments like space missions, identifying vulnerabilities and inefficiencies that could compromise mission-critical systems. 
-
-- **Supported Programming Languages**
+- **Supported Programming Languages (20 Total)**
   - **Ada** (`.ada`, `.adb`, `.ads`)
+  - **Bash / Shell** (`.sh`, `.bash`, `.zsh`)
   - **C/C++** (`.c`, `.cpp`, `.cxx`, `.h`, `.hpp`)
   - **C# (CSharp)** (`.cs`)
+  - **Elixir** (`.ex`, `.exs`)
   - **Fortran** (`.f`, `.f90`, `.f95`, `.f03`)
   - **Go** (`.go`)
   - **Haskell** (`.hs`, `.lhs`)
   - **Java** (`.java`)
   - **JavaScript/TypeScript** (`.js`, `.ts`, `.jsx`, `.tsx`)
+  - **Julia** (`.jl`)
   - **Kotlin** (`.kt`)
   - **Lua** (`.lua`)
   - **PHP** (`.php`, `.phtml`)
@@ -23,17 +28,20 @@
   - **Rust** (`.rs`)
   - **Scala** (`.scala`, `.sc`)
   - **Swift** (`.swift`)
+  - **Zig** (`.zig`)
 
 - **Contents**
-  1. [Install & Usage](#installation)
+  1. [Install & Usage](#install--usage)
   2. [Command Arguments](#command-arguments)
-  3. [Performance and Reliability Rules](#performance-and-reliability-rules)
-  4. [Security Rules](#security-rules)
-  5. [Zero External Dependencies](#zero-external-dependencies)
-  6. [Limitations](#limitations)
-  7. [Contributing](#contributing)
-  8. [License](#license)
-  9. [Author](#author)
+  3. [CI/CD Integration & Reporting](#cicd-integration--reporting)
+  4. [Ignoring Files & Inline Suppression](#ignoring-files--inline-suppression)
+  5. [Performance and Reliability Rules](#performance-and-reliability-rules)
+  6. [Security Rules](#security-rules)
+  7. [Zero External Dependencies](#zero-external-dependencies)
+  8. [Limitations](#limitations)
+  9. [Contributing](#contributing)
+  10. [License](#license)
+  11. [Author](#author)
 
 
 # Install & Usage
@@ -50,17 +58,55 @@ Example usage for scanning code:
 space-proof-code /path/to/code
 ```
 Example output report of issues found:
-![Example SPC Report](https://raw.githubusercontent.com/putervision/spc/refs/tags/1.1.20/assets/example_report.png)
+![Example SPC Report](https://raw.githubusercontent.com/putervision/spc/refs/tags/1.2.0/assets/example_report.png)
 
 # Command Arguments
-`space-proof-code|spc [/path/to/code][-cs]|[-v]|[-h]`
+`space-proof-code|spc [/path/to/code] [--format table|json|md] [-o report_file] [--max-severity N] [--fail-on-issue] [-cs] [-v] [-h]`
   
 | Argument      | Description                  | Required? | Default      |
 |---------------|------------------------------|-----------|--------------|
-| `/path/to/code` | Path to the code you want to scan | No | `./`
+| `/path/to/code` | Path to the code you want to scan | No | `./` |
+| `--format <type>` | Output format (`table`, `json`, `md`) | No | `table` |
+| `-o`, `--output <file>` | Path to save output report file | No | `N/A` |
+| `--max-severity <N>` | Fail run (exit code 1) if average risk level >= N | No | `N/A` |
+| `--fail-on-issue` | Fail run (exit code 1) if any issues are detected | No | `N/A` |
 | `--help`, `-h`     | Displays the help menu      | No       | N/A          |
 | `--version`, `-v`    | Displays the version number      | No       | N/A          |
 | `--create-sums`, `-cs`   | Generates a checksum file in the scanned code path      | No        | N/A        |
+
+# CI/CD Integration & Reporting
+
+Export audit results directly to machine-readable JSON or GitHub Markdown for PR summaries:
+
+```bash
+# Export report to JSON for security dashboards
+space-proof-code . --format json -o spc-report.json
+
+# Export GitHub Markdown report for PR comments
+space-proof-code . --format md
+
+# Enforce quality gate in CI pipeline (fail if risk level >= 4.0)
+space-proof-code . --max-severity 4.0
+```
+
+# Ignoring Files & Inline Suppression
+
+### `.spcignore` File
+Create a `.spcignore` file in your root project directory to exclude specific files or directories:
+```gitignore
+# .spcignore example
+vendor/
+dist/
+*.test.js
+```
+
+### Inline Directive (`spc-disable`)
+Suppress specific rules or line checks using inline comments:
+```javascript
+// spc-disable-line recursion
+function recursiveHelper(n) { return recursiveHelper(n - 1); }
+```
+
 
 #### Generate a checksum file in your code path directory (`/code/path/checksums.sha256.txt`) with argument `-cs` or `--create-sums` and then subsequent scans will check scanned files against hashes stored in the checksum.
 ```bash
@@ -646,7 +692,23 @@ Therefore, it is essential to always validate the return values of critical func
 - To extend support for other languages, modify `LANGUAGE_PATTERNS` in `lib/scanner.js`.
 
 # License
-MIT License - see [LICENSE](LICENSE) for details.
+MIT License — see [LICENSE](LICENSE) for details.
 
-# Author
-PuterVision <code@putervision.com> - https://putervision.com
+# Author & Maintainer
+[PuterVision LLC](https://putervision.com) — <code@putervision.com>
+
+---
+
+## ⚖️ PuterVision Legal & Usage Disclaimers
+
+> [!IMPORTANT]
+> **Data Privacy & Local Execution Guarantee**  
+> `spc` (Space Proof Code) is engineered by PuterVision LLC with a strict **local-first privacy architecture**. All static analysis, AST regex parsing, and vulnerability scanning run 100% locally on your machine. No source code, file structures, or scan results are ever transmitted, telemetry-tracked, or collected by PuterVision LLC.
+
+> [!WARNING]
+> **Static Analysis & Safety Disclaimer**  
+> `spc` enforces static code rules inspired by NASA's Power of Ten reliability guidelines. While `spc` helps identify critical security anti-patterns (e.g., unchecked return values, unsafe pointer math, recursion hazards, and hardcoded credentials), static analysis cannot guarantee the total absence of runtime defects or mission failures. Developers are advised to complement `spc` with dynamic testing, fuzzing, and formal verification in safety-critical production systems.
+
+> [!NOTE]
+> **Trademarks & Non-Affiliation Notice**  
+> All product names, trademarks, service marks, logos, and brands (such as NASA, ISO/IEC, MISRA, Node.js, and GitHub) referenced in this documentation are the property of their respective owners. References to NASA's Power of Ten rules or third-party guidelines are for educational and compatibility identification purposes only, and do not imply endorsement, sponsorship, or affiliation with PuterVision LLC.

@@ -1,2 +1,7 @@
 node_modules
 coverage
+.state-memory-mcp
+
+# vision-memory-mcp local database
+.vision-memory-mcp/
+.env

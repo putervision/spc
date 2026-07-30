@@ -1,53 +1,77 @@
 {
   "name": "@putervision/spc",
-  "version": "1.1.24",
-  "description": "Space Proof Code - Tools to facilitate space-proofing code by identifying performance and security related issues in JavaScript/TypeScript (`.js`, `.ts`), Python (`.py`), C/C++ (`.c`, `.cpp`, `.h`), Go (`.go`), Rust (`.rs`), and Java (`.java`) files",
+  "version": "1.2.0",
+  "description": "High-performance zero-dependency static analysis tool enforcing NASA Power of Ten reliability and security rules across 20 programming languages (JS/TS, Python, C/C++, Go, Rust, Java, Ada, C#, Fortran, Haskell, Kotlin, Lua, PHP, Ruby, Scala, Swift, Zig, Julia, Elixir, Shell/Bash).",
+  "keywords": [
+    "ada",
+    "bash",
+    "ci-cd",
+    "code-quality",
+    "cpp",
+    "csharp",
+    "elixir",
+    "fortran",
+    "golang",
+    "haskell",
+    "java",
+    "javascript",
+    "julia",
+    "kotlin",
+    "linter",
+    "lua",
+    "nasa-rules",
+    "php",
+    "power-of-ten",
+    "putervision",
+    "python",
+    "ruby",
+    "rust",
+    "scala",
+    "secure-coding",
+    "security-analysis",
+    "space-proof-code",
+    "spaceproof",
+    "spc",
+    "static-analysis",
+    "swift",
+    "typescript",
+    "vulnerability-scanner",
+    "zig"
+  ],
+  "homepage": "https://github.com/putervision/spc#readme",
+  "bugs": {
+    "url": "https://github.com/putervision/spc/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/putervision/spc.git"
+  },
+  "license": "MIT",
+  "author": "PuterVision <code@putervision.com>",
   "main": "lib/scanner.js",
   "bin": {
     "space-proof-code": "./bin/cli.js",
     "spc": "./bin/cli.js"
   },
   "scripts": {
-    "start": "node bin/cli.js",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
     "format": "prettier --write \"**/*.js\"",
     "format:check": "prettier --check \"**/*.js\"",
     "prepublishOnly": "npm run test",
     "release": "npm publish --access public",
-    "self-check": "node bin/cli.js ./lib ./bin",
     "scan": "node bin/cli.js",
-    "scan:test": "node bin/cli.js ./test/examples/"
+    "scan:test": "node bin/cli.js ./test/examples/",
+    "self-check": "node bin/cli.js ./lib ./bin",
+    "start": "node bin/cli.js",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/putervision/spc.git"
+  "devDependencies": {
+    "jest": "^29.7.0"
   },
-  "keywords": [
-    "space",
-    "proof",
-    "code",
-    "spc",
-    "spaceproof",
-    "space-proof-code",
-    "spaceproofcode",
-    "space proof code",
-    "nasa code",
-    "spacex code",
-    "static-analysis",
-    "secure code",
-    "security-analysis"
-  ],
-  "author": "PuterVision <code@putervision.com>",
-  "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
   },
-  "bugs": {
-    "url": "https://github.com/putervision/spc/issues"
-  },
-  "homepage": "https://github.com/putervision/spc#readme",
   "volta": {
     "node": "18.20.4"
   },

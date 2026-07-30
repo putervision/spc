@@ -397,4 +397,72 @@ describe('security checks', () => {
       'Security risk - Unchecked return from critical function - \'fetch("http://space.api");\''
     );
   });
+
+  it('detects unbounded loops in Zig', async () => {
+    fs.readdir.mockResolvedValue(['main.zig']);
+    fs.readFile.mockResolvedValue(`
+      pub fn main() void {
+          while (true) {
+              std.debug.print("loop", .{});
+          }
+      }
+    `);
+
+    jest.spyOn(path, 'join').mockReturnValue('/mock/main.zig');
+    jest.spyOn(path, 'extname').mockReturnValue('.zig');
+
+    const results = await scanCodebase('/mock/dir');
+    expect(results[0].language).toBe('zig');
+    expect(results[0].issues[0].issueType).toBe('unbounded_loops');
+  });
+
+  it('detects eval usage in Julia', async () => {
+    fs.readdir.mockResolvedValue(['script.jl']);
+    fs.readFile.mockResolvedValue(`
+      function run_code(expr)
+          eval(Meta.parse(expr))
+      end
+    `);
+
+    jest.spyOn(path, 'join').mockReturnValue('/mock/script.jl');
+    jest.spyOn(path, 'extname').mockReturnValue('.jl');
+
+    const results = await scanCodebase('/mock/dir');
+    expect(results[0].language).toBe('julia');
+    expect(results[0].issues[0].issueType).toBe('eval_usage');
+  });
+
+  it('detects eval in Elixir', async () => {
+    fs.readdir.mockResolvedValue(['runner.ex']);
+    fs.readFile.mockResolvedValue(`
+      defmodule Runner do
+        def execute(code) do
+          Code.eval_string(code)
+        end
+      end
+    `);
+
+    jest.spyOn(path, 'join').mockReturnValue('/mock/runner.ex');
+    jest.spyOn(path, 'extname').mockReturnValue('.ex');
+
+    const results = await scanCodebase('/mock/dir');
+    expect(results[0].language).toBe('elixir');
+    expect(results[0].issues[0].issueType).toBe('eval_usage');
+  });
+
+  it('detects unsafe input in Bash script', async () => {
+    fs.readdir.mockResolvedValue(['deploy.sh']);
+    fs.readFile.mockResolvedValue(`
+      #!/bin/bash
+      rm -rf $USER_DIR
+    `);
+
+    jest.spyOn(path, 'join').mockReturnValue('/mock/deploy.sh');
+    jest.spyOn(path, 'extname').mockReturnValue('.sh');
+
+    const results = await scanCodebase('/mock/dir');
+    expect(results[0].language).toBe('bash');
+    expect(results[0].issues[0].issueType).toBe('unsafe_input');
+  });
 });
+

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Space Proof Code (SPC) — Zero-Dependency NASA Power of Ten Static Analyzer</title>
+  <meta name="description" content="High-performance, zero-dependency static analysis tool enforcing NASA Power of Ten reliability & security rules across 20 programming languages. Built 100% locally by PuterVision LLC.">
+  <meta name="keywords" content="spc, space proof code, static analysis, nasa power of ten, zero dependency, security scanner, ada, bash, c, cpp, csharp, elixir, fortran, go, haskell, java, javascript, julia, kotlin, lua, php, python, ruby, rust, scala, swift, typescript, zig">
+  <meta name="author" content="PuterVision LLC">
+  <meta name="theme-color" content="#0b0f19">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="spc-icon.png">
+  <link rel="shortcut icon" href="favicon.ico">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="glow-backdrop"></div>
+  <div class="glow-backdrop-2"></div>
+
+  <header>
+    <div class="logo">
+      <a href="https://putervision.com" target="_blank" rel="noopener noreferrer" class="brand-link">
+        <img src="putervision-icon.png" alt="PuterVision Icon" class="nav-brand-img"> PuterVision
+      </a>
+      <span class="logo-sep">/</span>
+      <a href="https://github.com/putervision/spc" class="logo-link">
+        <img src="spc-icon.png" alt="SPC Icon" class="nav-brand-img">
+        <span class="logo-text">spc</span>
+      </a>
+    </div>
+    <nav aria-label="Main Navigation">
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#languages">20 Languages</a></li>
+        <li><a href="#rules">NASA Rules</a></li>
+        <li><a href="#quickstart">Quickstart</a></li>
+        <li><a href="#security">Security & Legal</a></li>
+      </ul>
+    </nav>
+    <a href="https://github.com/putervision/spc" class="btn-github" target="_blank" rel="noopener noreferrer" aria-label="Star on GitHub">
+      <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" role="img" style="color: #fbbf24">
+        <path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"></path>
+      </svg>
+      Star on
+      <svg height="18" width="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" role="img">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+      </svg>
+    </a>
+  </header>
+
+  <main class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+      <span class="badge">RELEASE v1.2.0 • ZERO DEPENDENCIES • 20 LANGUAGES</span>
+      <h1>
+        <img src="spc-icon.png" alt="SPC Icon" class="hero-title-icon">
+        <span>Space Proof Code (SPC)</span>
+      </h1>
+      <p>High-performance zero-dependency static analysis tool enforcing NASA Power of Ten reliability & security rules across 20 programming languages. Maintained natively by PuterVision LLC.</p>
+      
+      <div class="cta-group">
+        <a href="#quickstart" class="btn-primary">Get Started</a>
+        <a href="#languages" class="btn-secondary">View Supported Languages</a>
+        <a href="#rules" class="btn-secondary">NASA Power of 10 Rules</a>
+      </div>
+    </section>
+
+    <!-- Key Features Grid -->
+    <section id="features" class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <h3>NASA Power of Ten</h3>
+        <p>Enforces safety-critical software reliability rules (bounded loops, no recursion, heap allocation checks, assertions, and strict variable scoping).</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🌐</div>
+        <h3>20 Programming Languages</h3>
+        <p>Full static analysis support for Ada, Bash, C/C++, C#, Elixir, Fortran, Go, Haskell, Java, JS/TS, Julia, Kotlin, Lua, PHP, Python, Ruby, Rust, Scala, Swift, and Zig.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Zero External Dependencies</h3>
+        <p>Written 100% from scratch with pure native JavaScript regex AST parsers. Zero supply-chain dependency vulnerabilities or breaking upstream changes.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Vulnerability & Security Scanner</h3>
+        <p>Detects unchecked return values, unsafe pointer arithmetic, hardcoded secret credentials, unsafe inputs, and unvalidated boundary conditions.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚙️</div>
+        <h3>CI/CD Integration & Automated Reports</h3>
+        <p>Generates machine-readable JSON, Markdown tables (`--format md`), and formatted console table reports for automated CI/CD pipeline blocking.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Local Privacy Guarantee</h3>
+        <p>Runs 100% locally on your workstation or runner. Zero code transmission, zero network calls, zero telemetry, and zero tracking.</p>
+      </div>
+    </section>
+
+    <!-- Supported Languages -->
+    <section id="languages" class="card">
+      <div class="section-title">
+        <span class="badge">Multi-Language Ecosystem</span>
+        <h2>20 Supported Programming Languages</h2>
+      </div>
+
+      <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1.5rem;">
+        Space Proof Code provides unified, rule-based static analysis across all major systems and application languages:
+      </p>
+
+      <div class="lang-chips">
+        <span class="lang-chip">🚀 Ada (.ada, .adb)</span>
+        <span class="lang-chip">🐚 Bash / Shell (.sh, .bash)</span>
+        <span class="lang-chip">⚡ C / C++ (.c, .cpp, .h)</span>
+        <span class="lang-chip">🔷 C# (.cs)</span>
+        <span class="lang-chip">💧 Elixir (.ex, .exs)</span>
+        <span class="lang-chip">📐 Fortran (.f90, .f95)</span>
+        <span class="lang-chip">🐹 Go (.go)</span>
+        <span class="lang-chip">λ Haskell (.hs)</span>
+        <span class="lang-chip">☕ Java (.java)</span>
+        <span class="lang-chip">🟨 JavaScript / TypeScript (.js, .ts)</span>
+        <span class="lang-chip">🟣 Julia (.jl)</span>
+        <span class="lang-chip">🎯 Kotlin (.kt)</span>
+        <span class="lang-chip">🌙 Lua (.lua)</span>
+        <span class="lang-chip">🐘 PHP (.php)</span>
+        <span class="lang-chip">🐍 Python (.py)</span>
+        <span class="lang-chip">💎 Ruby (.rb)</span>
+        <span class="lang-chip">🦀 Rust (.rs)</span>
+        <span class="lang-chip">🔴 Scala (.scala)</span>
+        <span class="lang-chip">🍊 Swift (.swift)</span>
+        <span class="lang-chip">⚡ Zig (.zig)</span>
+      </div>
+    </section>
+
+    <!-- Code Quickstart Section -->
+    <section id="quickstart" class="card">
+      <div class="section-title">
+        <span class="badge">CLI Quickstart</span>
+        <h2>Command Line Usage</h2>
+      </div>
+
+      <div class="code-box">
+<span class="cm"># Install Space Proof Code globally via npm</span>
+<span class="fn">npm</span> install -g <span class="str">@putervision/spc</span>
+
+<span class="cm"># Scan a project directory with default NASA Power of 10 rules</span>
+<span class="fn">spc</span> ./src
+
+<span class="cm"># Output JSON report file for machine-readable CI/CD integration</span>
+<span class="fn">spc</span> . --format json -o spc-report.json
+
+<span class="cm"># Fail build if severity threshold or issues are detected</span>
+<span class="fn">spc</span> ./src --max-severity 4 --fail-on-issue
+      </div>
+    </section>
+
+    <!-- Security & Legal -->
+    <section id="security" class="card">
+      <div class="section-title">
+        <span class="badge">Privacy & Legal Disclaimers</span>
+        <h2>PuterVision LLC Security Guarantee</h2>
+      </div>
+
+      <div style="max-width: 800px; margin: 0 auto; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+        <p style="margin-bottom: 1rem;">
+          <strong style="color: var(--text-primary);">Data Privacy & Local Execution Guarantee:</strong> Space Proof Code (`@putervision/spc`) is engineered by PuterVision LLC with a strict <strong>local-first privacy architecture</strong>. All static analysis, regex AST parsing, and vulnerability scanning run 100% locally on your machine. No source code, directory structures, or scan results are ever transmitted or collected.
+        </p>
+
+        <p style="margin-bottom: 1rem;">
+          <strong style="color: var(--text-primary);">Static Analysis & Safety Disclaimer:</strong> While `spc` helps identify critical security anti-patterns (e.g., unchecked return values, unsafe pointer math, recursion hazards, and hardcoded credentials), static analysis cannot guarantee the total absence of runtime defects or mission failures. Developers are advised to complement `spc` with dynamic testing, fuzzing, and formal verification in safety-critical production systems.
+        </p>
+
+        <p>
+          <strong style="color: var(--text-primary);">Trademarks & Non-Affiliation Notice:</strong> All product names, trademarks, service marks, logos, and brands (such as NASA, ISO/IEC, MISRA, Node.js, and GitHub) referenced in this project and documentation are the property of their respective owners. References to NASA's Power of Ten rules or third-party guidelines are for educational and compatibility identification purposes only, and do not imply endorsement, sponsorship, or affiliation with PuterVision LLC.
+        </p>
+      </div>
+    </section>
+
+    <footer>
+      <p>© 2025-2026 <a href="https://putervision.com" target="_blank" rel="noopener noreferrer" style="color: var(--accent-cyan); text-decoration: none;">PuterVision LLC</a>. Released under the MIT License.</p>
+      <p style="margin-top: 0.5rem; font-size: 0.82rem;">Space Proof Code • 20 Languages • Zero External Dependencies • Local Execution</p>
+    </footer>
+  </main>
+</body>
+</html>
