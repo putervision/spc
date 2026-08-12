@@ -1,69 +1,54 @@
 # Contributing to Space Proof Code (`@putervision/spc`)
 
-Thank you for your interest in contributing to **Space Proof Code (SPC)**! We welcome contributions that improve static analysis accuracy, expand language coverage, refine NASA Power of Ten rule enforcement, and enhance performance.
+Thank you for your interest in contributing to `@putervision/spc`! We welcome community contributions to expand language support, refine security pattern detectors, and improve static analysis performance.
 
 ---
 
-## Zero External Dependencies Rule
+## Code of Conduct & Standards
 
-> [!IMPORTANT]
-> **Strict Zero-Dependency Constraint**  
-> `@putervision/spc` is built with **100% native Node.js code and pure regex AST parsers**. We do **NOT** accept new runtime dependencies in `package.json`. All scanner, formatter, and CLI logic must be written from scratch using standard Node.js built-ins (`fs`, `path`, `crypto`).
-
----
-
-## How to Add a New Language Support
-
-To add support for a new programming language:
-
-1. Create a new pattern definition file in `lib/lang/<language>.js`.
-2. Implement the required `LanguagePatterns` structure:
-   ```javascript
-   const NewLangPatterns = {
-     extensions: ['.ext'],
-     patterns: {
-       recursion: /.../g,
-       unbounded_loops: /.../g,
-       multiple_returns: /.../g,
-       // Include security patterns (unsafe_input, exposed_secrets, etc.)
-     },
-     function_regex: /^.../,
-     ignore_functions: ['print'],
-     critical_functions: ['read'],
-     void_return_indicator: 'print',
-   };
-
-   module.exports = { NewLangPatterns };
-   ```
-3. Register the language in `lib/scanner.js` (`LANGUAGE_PATTERNS`).
-4. Add test code samples in `test/examples/` and test cases in `test/patterns.test.js`.
+1. **Zero External Dependencies Policy**: `@putervision/spc` is built with pure Node.js native APIs (fs, path, crypto) and regex pattern matching algorithms. Do NOT introduce third-party npm dependencies.
+2. **Local-First Privacy**: Ensure all new checks execute 100% locally without external network calls or telemetry tracking.
+3. **Code Style**: ES2022+ standards, 2-space indentation, mandatory JSDoc annotations for exported and internal functions.
 
 ---
 
-## Local Development & Testing
+## Development Setup
 
 ```bash
-# 1. Clone the repository
+# Clone the repository
 git clone https://github.com/putervision/spc.git
 cd spc
 
-# 2. Run unit tests
+# Install development dependencies (Jest, ESLint, Prettier)
+npm install
+
+# Run unit and integration tests
 npm test
 
-# 3. Run test coverage
-npm run test:coverage
+# Run code formatting check & linting
+npm run format:check
+npm run lint
 
-# 4. Self-scan codebase
+# Run self-scan analysis
 npm run self-check
-
-# 5. Verify npm package contents
-npm pack --dry-run
 ```
 
 ---
 
-## Code Style & Guidelines
+## Adding a New Language or Rule Module
 
-- Use 2-space indentation, single quotes, and trailing semicolons.
-- Ensure all regex patterns match multiline blocks cleanly without catastrophic backtracking.
-- Write clear comments explaining rule heuristics and limitations.
+To add support for a new programming language or security rule engine:
+
+1. Create a pattern rule engine module in `lib/lang/<language>.js`.
+2. Register the export in `LANGUAGE_PATTERNS` inside `lib/scanner.js`.
+3. Add severities, categories, and documentation URLs in `lib/info.js`.
+4. Add bad example code fixtures in `test/examples/bad-example.<ext>`.
+5. Add unit test assertions in `test/scanner.test.js` and `test/patterns.test.js`.
+6. Submit a Pull Request targeting `main`.
+
+---
+
+## Reporting Bugs & Security Vulnerabilities
+
+- For standard bug reports or feature requests, please open a [GitHub Issue](https://github.com/putervision/spc/issues).
+- For security vulnerability reports, please refer to [SECURITY.md](./SECURITY.md) and contact `security@putervision.com`.

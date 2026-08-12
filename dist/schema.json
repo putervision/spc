@@ -1,0 +1,77 @@
+{
+  "name": "space-proof-code",
+  "version": "1.4.0",
+  "description": "High-performance zero-dependency static analysis tool enforcing NASA Power of Ten reliability and security rules across 20 programming languages, plus AI agent, MCP server config, skill, and LLM model configuration security auditing.",
+  "operations": [
+    {
+      "name": "scanCodebase",
+      "description": "Scans a directory for NASA Power of Ten rules, traditional security vulnerabilities, and AI agent flaw patterns.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "directory": {
+            "type": "string",
+            "description": "Directory path to scan (default: current directory)"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "table",
+              "json",
+              "md",
+              "sarif"
+            ],
+            "default": "table",
+            "description": "Output format"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "nasa",
+              "security",
+              "quality",
+              "agent"
+            ],
+            "description": "Filter rules by category"
+          },
+          "aiOnly": {
+            "type": "boolean",
+            "default": false,
+            "description": "Scan only AI Agent skills, prompts, MCP configs & model files"
+          },
+          "skipAi": {
+            "type": "boolean",
+            "default": false,
+            "description": "Skip AI agent checks, scan traditional code languages only"
+          },
+          "maxSeverityThreshold": {
+            "type": "number",
+            "description": "Exit non-zero if average severity risk level >= N"
+          },
+          "maxIssueSeverityThreshold": {
+            "type": "number",
+            "description": "Exit non-zero if any single issue severity >= N"
+          },
+          "failOnIssue": {
+            "type": "boolean",
+            "default": false,
+            "description": "Exit non-zero if any issues are detected"
+          },
+          "createSums": {
+            "type": "boolean",
+            "default": false,
+            "description": "Generate SHA-256 checksum manifest file"
+          }
+        }
+      }
+    },
+    {
+      "name": "listRules",
+      "description": "Lists all 63+ supported rules with severities, categories, and documentation URIs."
+    },
+    {
+      "name": "getCapabilities",
+      "description": "Returns supported languages, AI domains, total rules, and output formats."
+    }
+  ]
+}

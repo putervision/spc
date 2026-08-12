@@ -2,23 +2,21 @@
 
 /**
  * cli.js - Command-line interface for @putervision/spc (Space Proof Code).
- * Executes codebase scanner and reports space-proofing issues across 20 languages.
+ * Executes codebase scanner across 20 languages + AI Agent Skills, MCP server configs,
+ * prompt instructions, and LLM model deployment configurations.
  *
  * Usage:
- * - `space-proof-code /path/to/code` → Scans path and reports issues.
- * - `space-proof-code --format json -o report.json` → Outputs machine-readable JSON report to file.
- * - `space-proof-code --format md` → Outputs Markdown report table for CI summaries.
- * - `space-proof-code --max-severity 4` → Fails (exit code 1) if average severity >= 4 detected.
- * - `space-proof-code --max-issue-severity 4` → Fails if any single issue has severity >= 4.
- * - `space-proof-code --exclude node_modules,dist` → Excludes patterns from scan.
- * - `space-proof-code --quiet` → Suppresses non-essential console logs.
- * - `space-proof-code --help` → Displays help menu.
- * - `space-proof-code --version` → Displays tool version.
+ * - `spc /path/to/code` → Scans path and reports issues.
+ * - `spc --format json -o report.json` → Outputs machine-readable JSON report.
+ * - `spc --format sarif -o report.sarif` → Outputs SARIF v2.1.0 for GitHub Code Scanning.
+ * - `spc --ai-only` → Scans only AI Agent skills, prompt templates, MCP configs, and model files.
+ * - `spc --category security` → Filters rules by category (nasa, security, quality, agent).
+ * - `spc --list-rules` → Displays all rules with severities and categories.
  */
 
 const fs = require('fs').promises;
 const { scanCodebase } = require('../lib/scanner');
-const { PATTERN_INFO } = require('../lib/info');
+const { PATTERN_INFO, getAgentToolSchema } = require('../lib/info');
 const { formatResults } = require('../lib/formatter');
 const { buildIgnorePatterns } = require('../lib/ignore');
 const { loadConfig } = require('../lib/config');
@@ -29,34 +27,61 @@ const VERSION = packageJson.version;
 
 function showHelp() {
   console.log(`
-${CLI_NAME} v${VERSION} - Space Proof Code Tool (PuterVision)
+${CLI_NAME} v${VERSION} - Space Proof Code & AI Agent Security Analyzer (PuterVision)
 
 High-performance zero-dependency static analysis tool enforcing NASA Power of Ten
-reliability and security rules across 20 programming languages.
+reliability rules across 20 programming languages, plus AI agent skill, MCP config,
+prompt template, and LLM model deployment security auditing.
 
 Usage: ${CLI_NAME} [directory] [options]
 
 Options:
-  --help, -h                  Display this help menu
-  --version, -V               Display the version number
-  --create-sums, -cs          Generates a checksum file in the scanned code path
-  --format <table|json|md>    Output format (default: table)
-  -o, --output <file>         Save output report to specified file path
-  --exclude <pattern>         Add extra ignore patterns (comma-separated or flag repeated)
-  --config <path>             Path to .spc.config.json configuration file
-  --progress, -p              Show scanning progress file by file
-  --quiet, -q                 Suppress standard log outputs (only output error logs)
-  --color / --no-color        Enable or disable ANSI colors in terminal output
-  --max-severity <N>          Exit non-zero if average severity risk level >= N
-  --max-issue-severity <N>    Exit non-zero if any single issue severity >= N
-  --fail-on-issue             Exit non-zero if any space-proofing issues are found
+  --help, -h                    Display this help menu
+  --version, -v, -V             Display the version number
+  --format <table|json|md|sarif> Output format (default: table)
+  -o, --output <file>           Save output report to specified file path
+  --category <name>             Filter checks by category (nasa, security, quality, agent)
+  --ai-only                     Scan only AI agent skills, prompts, MCP configs & model files
+  --skip-ai                     Skip AI agent checks, scan traditional code languages only
+  --list-rules                  Display all supported rules, severities, and categories
+  --agent-tools, --schema       Print structured agent tool & operation schema JSON
+  --create-sums, -cs            Generates a SHA-256 checksum manifest file in target path
+  --exclude <pattern>           Add extra ignore patterns (comma-separated or flag repeated)
+  --config <path>               Path to .spc.config.json configuration file
+  --progress, -p                Show scanning progress file by file
+  --quiet, -q                   Suppress non-essential log outputs
+  --color / --no-color          Enable or disable ANSI colors in terminal output
+  --max-severity <N>            Exit non-zero if average severity risk level >= N
+  --max-issue-severity <N>      Exit non-zero if any single issue severity >= N
+  --fail-on-issue               Exit non-zero if any issues are detected
 
 Examples:
-  ${CLI_NAME} /path/to/code
-  ${CLI_NAME} . --format json -o spc-report.json --exclude node_modules
-  ${CLI_NAME} . --format md --max-issue-severity 4
-  ${CLI_NAME} --version
+  spc /path/to/code
+  spc . --format sarif -o spc-report.sarif
+  spc . --ai-only --format json -o agent-audit.json
+  spc --agent-tools
+  spc --list-rules
+  spc --version
   `);
+}
+
+function listRules() {
+  console.log(`\nSpace Proof Code (SPC v${VERSION}) — Rule Registry\n`);
+  console.log(
+    'Issue Type'.padEnd(32) +
+      'Category'.padEnd(12) +
+      'Severity'.padEnd(10) +
+      'Documentation URI'
+  );
+  console.log('-'.repeat(85));
+
+  for (const [issueType, info] of Object.entries(PATTERN_INFO)) {
+    const cat = info.category || 'quality';
+    const sev = `${info.severity}/5`;
+    const url = info.url || 'N/A';
+    console.log(issueType.padEnd(32) + cat.padEnd(12) + sev.padEnd(10) + url);
+  }
+  console.log(`\nTotal rules: ${Object.keys(PATTERN_INFO).length}\n`);
 }
 
 async function main() {
@@ -65,6 +90,9 @@ async function main() {
   let createSums = false;
   let format = 'table';
   let outputFile = null;
+  let category = null;
+  let aiOnly = false;
+  let skipAi = false;
   let maxSeverityThreshold = null;
   let maxIssueSeverityThreshold = null;
   let failOnIssue = false;
@@ -72,7 +100,6 @@ async function main() {
   let configPath = null;
   let showProgress = false;
   let quiet = false;
-  let color = true;
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -82,6 +109,14 @@ async function main() {
     }
     if (arg === '--version' || arg === '-v' || arg === '-V') {
       console.log(`${CLI_NAME} v${VERSION}`);
+      return;
+    }
+    if (arg === '--list-rules') {
+      listRules();
+      return;
+    }
+    if (arg === '--agent-tools' || arg === '--schema') {
+      console.log(JSON.stringify(getAgentToolSchema(), null, 2));
       return;
     }
     if (arg === '--create-sums' || arg === '-cs') {
@@ -94,6 +129,18 @@ async function main() {
     }
     if (arg === '-o' || arg === '--output') {
       outputFile = args[++i] || null;
+      continue;
+    }
+    if (arg === '--category') {
+      category = (args[++i] || '').toLowerCase();
+      continue;
+    }
+    if (arg === '--ai-only') {
+      aiOnly = true;
+      continue;
+    }
+    if (arg === '--skip-ai') {
+      skipAi = true;
       continue;
     }
     if (arg === '--exclude') {
@@ -113,14 +160,6 @@ async function main() {
     }
     if (arg === '--quiet' || arg === '-q') {
       quiet = true;
-      continue;
-    }
-    if (arg === '--no-color') {
-      color = false;
-      continue;
-    }
-    if (arg === '--color') {
-      color = true;
       continue;
     }
     if (arg === '--max-severity') {
@@ -144,6 +183,9 @@ async function main() {
     createSums,
     format,
     outputFile,
+    category,
+    aiOnly,
+    skipAi,
     maxSeverityThreshold,
     maxIssueSeverityThreshold,
     failOnIssue,
@@ -151,7 +193,6 @@ async function main() {
     configPath,
     showProgress,
     quiet,
-    color,
   });
 }
 
@@ -160,6 +201,9 @@ async function scanDirectory(directory, options = {}) {
     createSums = false,
     format = 'table',
     outputFile = null,
+    category = null,
+    aiOnly = false,
+    skipAi = false,
     maxSeverityThreshold = null,
     maxIssueSeverityThreshold = null,
     failOnIssue = false,
@@ -188,14 +232,23 @@ async function scanDirectory(directory, options = {}) {
   ]);
 
   if (!quiet && format === 'table' && !outputFile) {
-    console.log(`Scanning ${directory} for space-proofing issues...`);
-    console.log(`- Version: ${VERSION}`);
-    console.log(`- Create checksums: ${createSums}`);
-    if (showProgress) console.log(`- Progress mode: active`);
+    console.error(
+      `Scanning ${directory} for space-proofing & AI security issues...`
+    );
+    console.error(`- Version: ${VERSION}`);
+    console.error(`- Create checksums: ${createSums}`);
+    if (category) console.error(`- Category filter: ${category}`);
+    if (aiOnly) console.error(`- Scan mode: AI Agent & MCP files only`);
+    if (showProgress) console.error(`- Progress mode: active`);
   }
 
   try {
-    const results = await scanCodebase(directory, createSums, ignorePatterns);
+    const results = await scanCodebase(directory, createSums, ignorePatterns, {
+      category,
+      aiOnly,
+      skipAi,
+      configPath,
+    });
     const end = Date.now();
     const timeDiff = (end - startTime) / 1000;
 
@@ -204,12 +257,13 @@ async function scanDirectory(directory, options = {}) {
     let maxFoundIssueSeverity = 0;
 
     if (results.length === 0) {
-      if (!quiet && format === 'table')
-        console.log('No files found to analyze.');
+      if (!quiet && format === 'table') {
+        console.error('No matching files found to analyze.');
+      }
       return;
     }
 
-    if (format === 'json' || format === 'md') {
+    if (format === 'json' || format === 'md' || format === 'sarif') {
       const formattedOutput = formatResults(results, {
         format,
         CLI_NAME,
@@ -219,9 +273,9 @@ async function scanDirectory(directory, options = {}) {
 
       if (outputFile) {
         await fs.writeFile(outputFile, formattedOutput, 'utf8');
-        if (!quiet) console.log(`Report successfully saved to ${outputFile}`);
+        if (!quiet) console.error(`Report successfully saved to ${outputFile}`);
       } else {
-        console.log(formattedOutput);
+        process.stdout.write(formattedOutput + '\n');
       }
 
       results.forEach(({ issues }) => {
@@ -235,7 +289,7 @@ async function scanDirectory(directory, options = {}) {
         }
       });
     } else {
-      // Default table display
+      // Default table display (console table)
       const issueCounts = {};
       results.forEach(({ relativePath, language, issues }) => {
         if (showProgress && !quiet) {
@@ -244,8 +298,9 @@ async function scanDirectory(directory, options = {}) {
           );
         }
 
-        if (!quiet)
+        if (!quiet) {
           console.log(`\nAnalyzing ${relativePath} (${language || 'n/a'})`);
+        }
         if (issues?.length > 0) {
           totalIssues += issues.length;
           if (!quiet) console.log(`Issues found: ${issues.length}`);
@@ -254,8 +309,9 @@ async function scanDirectory(directory, options = {}) {
             const severity = PATTERN_INFO[issue.issueType]?.severity ?? 0;
             const url = PATTERN_INFO[issue.issueType]?.url ?? 'N/A';
             totalSeverity += severity;
-            if (severity > maxFoundIssueSeverity)
+            if (severity > maxFoundIssueSeverity) {
               maxFoundIssueSeverity = severity;
+            }
 
             fileIssues.push({
               issue: issue.issueType,
@@ -300,7 +356,7 @@ async function scanDirectory(directory, options = {}) {
           timeDiff,
         });
         await fs.writeFile(outputFile, mdOutput, 'utf8');
-        if (!quiet) console.log(`Report summary saved to ${outputFile}`);
+        if (!quiet) console.error(`Report summary saved to ${outputFile}`);
       }
     }
 

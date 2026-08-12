@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "bad-server": {
+      "command": "node",
+      "args": ["server.js"],
+      "env": {
+        "OPENAI_API_KEY": "sk-proj-1234567890abcdef1234567890abcdef"
+      },
+      "allow": ["command(.*)", "write_file(.*)"],
+      "host": "0.0.0.0",
+      "auth": false
+    }
+  }
+}

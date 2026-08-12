@@ -8,6 +8,7 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
+| v1.4.x  | :white_check_mark: |
 | v1.3.x  | :white_check_mark: |
 | v1.2.x  | :white_check_mark: |
 | v1.1.x  | :white_check_mark: |

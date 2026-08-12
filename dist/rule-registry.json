@@ -1,0 +1,317 @@
+{
+  "recursion": {
+    "url": "docs/nasa-rules.md#recursion",
+    "severity": 4,
+    "category": "nasa"
+  },
+  "dynamic_memory": {
+    "url": "docs/nasa-rules.md#dynamic-memory",
+    "severity": 3,
+    "category": "nasa"
+  },
+  "complex_flow": {
+    "url": "docs/nasa-rules.md#complex-flow",
+    "severity": 2,
+    "category": "nasa"
+  },
+  "async_risk": {
+    "url": "docs/nasa-rules.md#async-risk",
+    "severity": 4,
+    "category": "nasa"
+  },
+  "unbounded_loops": {
+    "url": "docs/nasa-rules.md#unbounded-loops",
+    "severity": 5,
+    "category": "nasa"
+  },
+  "global_vars": {
+    "url": "docs/nasa-rules.md#global-vars",
+    "severity": 3,
+    "category": "nasa"
+  },
+  "try_catch": {
+    "url": "docs/nasa-rules.md#try-catch",
+    "severity": 2,
+    "category": "quality"
+  },
+  "set_timeout": {
+    "url": "docs/nasa-rules.md#set-timeout",
+    "severity": 4,
+    "category": "nasa"
+  },
+  "multiple_returns": {
+    "url": "docs/nasa-rules.md#multiple-returns",
+    "severity": 2,
+    "category": "quality"
+  },
+  "nested_conditionals": {
+    "url": "docs/nasa-rules.md#nested-conditionals",
+    "severity": 2,
+    "category": "quality"
+  },
+  "exceeds_max_func_lines": {
+    "url": "docs/nasa-rules.md#exceeds-max-function-lines",
+    "severity": 3,
+    "category": "quality"
+  },
+  "unchecked_func_return": {
+    "url": "docs/nasa-rules.md#unchecked-function-return",
+    "severity": 2,
+    "category": "quality"
+  },
+  "unchecked_func_return_crit": {
+    "url": "docs/nasa-rules.md#unchecked-function-return-critical",
+    "severity": 4,
+    "category": "security"
+  },
+  "eval_usage": {
+    "url": "docs/security-rules.md#eval-usage",
+    "severity": 5,
+    "category": "security"
+  },
+  "unsafe_input": {
+    "url": "docs/security-rules.md#unsafe-input",
+    "severity": 4,
+    "category": "security"
+  },
+  "network_call": {
+    "url": "docs/security-rules.md#network-call",
+    "severity": 3,
+    "category": "security"
+  },
+  "weak_crypto": {
+    "url": "docs/security-rules.md#weak-crypto",
+    "severity": 4,
+    "category": "security"
+  },
+  "unsafe_file_op": {
+    "url": "docs/security-rules.md#unsafe-file-op",
+    "severity": 3,
+    "category": "security"
+  },
+  "insufficient_logging": {
+    "url": "docs/security-rules.md#insufficient-logging",
+    "severity": 2,
+    "category": "quality"
+  },
+  "unsanitized_exec": {
+    "url": "docs/security-rules.md#unsanitized-exec",
+    "severity": 5,
+    "category": "security"
+  },
+  "exposed_secrets": {
+    "url": "docs/security-rules.md#exposed-secrets",
+    "severity": 5,
+    "category": "security"
+  },
+  "unrestricted_cors": {
+    "url": "docs/security-rules.md#unrestricted-cors",
+    "severity": 4,
+    "category": "security"
+  },
+  "checksum_mismatch": {
+    "url": "docs/cli-reference.md#checksums",
+    "severity": 4,
+    "category": "quality"
+  },
+  "import_risk": {
+    "url": "docs/security-rules.md#import-risk",
+    "severity": 3,
+    "category": "security"
+  },
+  "buffer_overflow_risk": {
+    "url": "docs/security-rules.md#buffer-overflow-risk",
+    "severity": 4,
+    "category": "security"
+  },
+  "unsafe_atom": {
+    "url": "docs/security-rules.md#unsafe-atom",
+    "severity": 3,
+    "category": "quality"
+  },
+  "unsafe_pointer": {
+    "url": "docs/security-rules.md#unsafe-pointer",
+    "severity": 4,
+    "category": "security"
+  },
+  "prototype_pollution": {
+    "url": "docs/security-rules.md#prototype-pollution",
+    "severity": 4,
+    "category": "security"
+  },
+  "xss_risk": {
+    "url": "docs/security-rules.md#xss-risk",
+    "severity": 4,
+    "category": "security"
+  },
+  "sql_injection": {
+    "url": "docs/security-rules.md#sql-injection",
+    "severity": 5,
+    "category": "security"
+  },
+  "ssrf_risk": {
+    "url": "docs/security-rules.md#ssrf-risk",
+    "severity": 4,
+    "category": "security"
+  },
+  "pickle_deserialize": {
+    "url": "docs/security-rules.md#pickle-deserialize",
+    "severity": 5,
+    "category": "security"
+  },
+  "yaml_load": {
+    "url": "docs/security-rules.md#yaml-load",
+    "severity": 4,
+    "category": "security"
+  },
+  "format_string": {
+    "url": "docs/security-rules.md#format-string",
+    "severity": 4,
+    "category": "security"
+  },
+  "use_after_free": {
+    "url": "docs/security-rules.md#use-after-free",
+    "severity": 5,
+    "category": "security"
+  },
+  "race_condition": {
+    "url": "docs/security-rules.md#race-condition",
+    "severity": 3,
+    "category": "quality"
+  },
+  "curl_pipe_bash": {
+    "url": "docs/security-rules.md#curl-pipe-bash",
+    "severity": 5,
+    "category": "security"
+  },
+  "sudo_nopasswd": {
+    "url": "docs/security-rules.md#sudo-nopasswd",
+    "severity": 5,
+    "category": "security"
+  },
+  "deserialization_risk": {
+    "url": "docs/security-rules.md#deserialization-risk",
+    "severity": 5,
+    "category": "security"
+  },
+  "xxe_injection": {
+    "url": "docs/security-rules.md#xxe-injection",
+    "severity": 4,
+    "category": "security"
+  },
+  "open_redirect": {
+    "url": "docs/security-rules.md#open-redirect",
+    "severity": 3,
+    "category": "security"
+  },
+  "timing_attack": {
+    "url": "docs/security-rules.md#timing-attack",
+    "severity": 3,
+    "category": "security"
+  },
+  "insecure_random": {
+    "url": "docs/security-rules.md#insecure-random",
+    "severity": 3,
+    "category": "security"
+  },
+  "prompt_injection_hazard": {
+    "url": "docs/ai-agent-rules.md#prompt-injection-hazard",
+    "severity": 5,
+    "category": "agent"
+  },
+  "unsafe_skill_command": {
+    "url": "docs/ai-agent-rules.md#unsafe-skill-command",
+    "severity": 5,
+    "category": "agent"
+  },
+  "unbounded_agent_loop": {
+    "url": "docs/ai-agent-rules.md#unbounded-agent-loop",
+    "severity": 4,
+    "category": "agent"
+  },
+  "hardcoded_agent_secret": {
+    "url": "docs/ai-agent-rules.md#hardcoded-agent-secret",
+    "severity": 5,
+    "category": "agent"
+  },
+  "overly_broad_tool_grant": {
+    "url": "docs/ai-agent-rules.md#overly-broad-tool-grant",
+    "severity": 4,
+    "category": "agent"
+  },
+  "missing_agent_guardrails": {
+    "url": "docs/ai-agent-rules.md#missing-agent-guardrails",
+    "severity": 3,
+    "category": "agent"
+  },
+  "data_exfiltration_pattern": {
+    "url": "docs/ai-agent-rules.md#data-exfiltration-pattern",
+    "severity": 5,
+    "category": "agent"
+  },
+  "recursive_agent_call": {
+    "url": "docs/ai-agent-rules.md#recursive-agent-call",
+    "severity": 4,
+    "category": "agent"
+  },
+  "overly_permissive_mcp_grant": {
+    "url": "docs/ai-agent-rules.md#overly-permissive-mcp-grant",
+    "severity": 5,
+    "category": "agent"
+  },
+  "unencrypted_mcp_env_secret": {
+    "url": "docs/ai-agent-rules.md#unencrypted-mcp-env-secret",
+    "severity": 5,
+    "category": "agent"
+  },
+  "unsafe_mcp_tool_schema": {
+    "url": "docs/ai-agent-rules.md#unsafe-mcp-tool-schema",
+    "severity": 4,
+    "category": "agent"
+  },
+  "exposed_mcp_endpoint": {
+    "url": "docs/ai-agent-rules.md#exposed-mcp-endpoint",
+    "severity": 4,
+    "category": "agent"
+  },
+  "missing_mcp_auth": {
+    "url": "docs/ai-agent-rules.md#missing-mcp-auth",
+    "severity": 4,
+    "category": "agent"
+  },
+  "unrestricted_mcp_scope": {
+    "url": "docs/ai-agent-rules.md#unrestricted-mcp-scope",
+    "severity": 3,
+    "category": "agent"
+  },
+  "unsafe_model_deserialization": {
+    "url": "docs/ai-agent-rules.md#unsafe-model-deserialization",
+    "severity": 5,
+    "category": "agent"
+  },
+  "insecure_model_endpoint": {
+    "url": "docs/ai-agent-rules.md#insecure-model-endpoint",
+    "severity": 4,
+    "category": "agent"
+  },
+  "unauthenticated_model_download": {
+    "url": "docs/ai-agent-rules.md#unauthenticated-model-download",
+    "severity": 4,
+    "category": "agent"
+  },
+  "unsafe_model_temperature": {
+    "url": "docs/ai-agent-rules.md#unsafe-model-temperature",
+    "severity": 2,
+    "category": "quality"
+  },
+  "exposed_model_api_key": {
+    "url": "docs/ai-agent-rules.md#exposed-model-api-key",
+    "severity": 5,
+    "category": "agent"
+  },
+  "unvalidated_model_input": {
+    "url": "docs/ai-agent-rules.md#unvalidated-model-input",
+    "severity": 4,
+    "category": "agent"
+  }
+}

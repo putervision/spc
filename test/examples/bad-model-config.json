@@ -1,0 +1,8 @@
+{
+  "model_name": "unsafe-model",
+  "weights_only": false,
+  "bind": "0.0.0.0:8000",
+  "download_url": "http://unsecure-weights.org/model.bin",
+  "temperature": 2.8,
+  "openai_api_key": "sk-proj-9876543210fedcba9876543210fedcba"
+}

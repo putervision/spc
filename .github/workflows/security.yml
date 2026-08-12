@@ -1,0 +1,27 @@
+name: Security & SARIF Self-Scan
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Every Sunday at midnight
+  workflow_dispatch:
+
+jobs:
+  security-scan:
+    name: Run SPC Self-Scan & Upload SARIF
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - run: npm ci
+
+      - name: Self Scan Codebase
+        run: node bin/cli.js . --format sarif -o spc-results.sarif
+
+      - name: Upload SARIF report to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: spc-results.sarif

@@ -5,6 +5,28 @@ All notable changes to the `@putervision/spc` (Space Proof Code) project will be
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-08-12
+
+### Added
+- **AI / Agent / MCP / Model Security Scanner**:
+  - Expanded static analysis engine to scan AI Agent skills (`SKILL.md`), prompt instructions (`AGENTS.md`, `.windsurfrules`, `.cursorrules`, `*.prompt`), MCP server configs (`mcp.json`, `config.json`), and LLM model deployment configs (`model_config.json`).
+  - Added specialized rule modules: `lib/lang/agent.js`, `lib/lang/mcp.js`, `lib/lang/model.js`.
+  - Added CLI flags `--ai-only` and `--skip-ai`.
+- **Output Formats & Programmatic API**:
+  - Added `--format sarif` for GitHub Code Scanning and IDE integration.
+  - Added root `index.js` exporting `{ scanCodebase, formatResults, PATTERN_INFO, loadConfig }`.
+  - Added `--category <nasa|security|quality|agent>` and `--list-rules` filtering options.
+- **PuterVision Branding Overhaul**:
+  - Decomposed README into concise hub (~150 lines) with 7 specialized sub-documents in `docs/`.
+  - Redesigned `docs/index.html` with PuterVision cyber-glass aesthetic and interactive rule explorer.
+
+### Fixed
+- Wired `.spc.config.json` rule toggles and line limits into `scanner.js`.
+- Implemented block-level comment suppression (`spc-disable` / `spc-enable`).
+- Integrated `plugin.js` rule loader.
+- Populated severity levels and URLs for all unlisted rules in `PATTERN_INFO`.
+- Routed status/progress logs to `stderr` to ensure clean stdout for JSON and SARIF formats.
+
 ## [1.3.0] - 2026-07-30
 
 ### Added

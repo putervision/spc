@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Space Proof Code (SPC) — Zero-Dependency NASA Power of Ten Static Analyzer</title>
-  <meta name="description" content="High-performance, zero-dependency static analysis tool enforcing NASA Power of Ten reliability & security rules across 20 programming languages. Built 100% locally by PuterVision LLC.">
-  <meta name="keywords" content="spc, space proof code, static analysis, nasa power of ten, zero dependency, security scanner, ada, bash, c, cpp, csharp, elixir, fortran, go, haskell, java, javascript, julia, kotlin, lua, php, python, ruby, rust, scala, swift, typescript, zig">
+  <title>Space Proof Code (SPC) — NASA Power of Ten & AI Agent Security Analyzer</title>
+  <meta name="description" content="High-performance, zero-dependency static analysis tool enforcing NASA Power of Ten reliability rules across 20 languages plus AI agent skill, MCP server config, prompt template, and LLM model security auditing. Built by PuterVision LLC.">
+  <meta name="keywords" content="spc, space proof code, static analysis, nasa power of ten, zero dependency, security scanner, ai agent security, mcp server, prompt injection, llm security, ada, bash, c, cpp, csharp, elixir, fortran, go, haskell, java, javascript, julia, kotlin, lua, php, python, ruby, rust, scala, swift, zig">
   <meta name="author" content="PuterVision LLC">
   <meta name="theme-color" content="#0b0f19">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://putervision.com">
-  <meta property="og:title" content="Space Proof Code (SPC) — NASA Power of Ten Static Analyzer">
-  <meta property="og:description" content="Zero-dependency static analysis tool enforcing NASA Power of Ten reliability & security rules across 20 programming languages.">
-  <meta property="og:image" content="https://raw.githubusercontent.com/putervision/spc/refs/tags/1.3.0/assets/example_report.png">
+  <meta property="og:title" content="Space Proof Code (SPC) — NASA Power of Ten & AI Agent Security Analyzer">
+  <meta property="og:description" content="Zero-dependency static analysis tool enforcing NASA Power of Ten rules across 20 programming languages plus AI Agent, MCP Server, and LLM Model configuration security auditing.">
+  <meta property="og:image" content="https://raw.githubusercontent.com/putervision/spc/refs/tags/1.4.0/assets/example_report.png">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://putervision.com">
   <meta name="twitter:title" content="Space Proof Code (SPC)">
-  <meta name="twitter:description" content="Zero-dependency static analysis tool enforcing NASA Power of Ten rules across 20 languages.">
-  <meta name="twitter:image" content="https://raw.githubusercontent.com/putervision/spc/refs/tags/1.3.0/assets/example_report.png">
+  <meta name="twitter:description" content="Zero-dependency static analysis tool enforcing NASA Power of Ten rules across 20 languages plus AI agent security auditing.">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/putervision/spc/refs/tags/1.4.0/assets/example_report.png">
 
   <!-- Structured Data JSON-LD -->
   <script type="application/ld+json">
@@ -29,7 +29,7 @@
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Space Proof Code",
-    "softwareVersion": "1.3.0",
+    "softwareVersion": "1.4.0",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Any",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
@@ -47,7 +47,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -68,8 +68,9 @@
     <nav aria-label="Main Navigation">
       <ul class="nav-links">
         <li><a href="#features">Features</a></li>
+        <li><a href="#agent-scanner">AI Agent Scanner</a></li>
         <li><a href="#languages">20 Languages</a></li>
-        <li><a href="#rules">NASA Rules</a></li>
+        <li><a href="#rule-explorer">Rule Explorer</a></li>
         <li><a href="#quickstart">Quickstart</a></li>
         <li><a href="#security">Security & Legal</a></li>
       </ul>
@@ -78,27 +79,25 @@
       <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" role="img" style="color: #fbbf24">
         <path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"></path>
       </svg>
-      Star on
-      <svg height="18" width="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" role="img">
-        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-      </svg>
+      Star on GitHub
     </a>
   </header>
 
   <main class="container">
     <!-- Hero Section -->
     <section class="hero">
-      <span class="badge">RELEASE v1.3.0 • ZERO DEPENDENCIES • 20 LANGUAGES</span>
+      <span class="badge">RELEASE v1.4.0 • ZERO DEPENDENCIES • 20 LANGUAGES</span>
+      <span class="badge badge-purple">🤖 AI AGENT & MCP SECURITY SCANNING</span>
       <h1>
         <img src="spc-icon.png" alt="SPC Icon" class="hero-title-icon">
         <span>Space Proof Code (SPC)</span>
       </h1>
-      <p>High-performance zero-dependency static analysis tool enforcing NASA Power of Ten reliability & security rules across 20 programming languages. Maintained natively by PuterVision LLC.</p>
-      
+      <p>High-performance zero-dependency static analysis tool enforcing NASA Power of Ten reliability rules across 20 programming languages, plus AI agent skill, MCP server config, prompt template, and LLM model configuration security auditing.</p>
+
       <div class="cta-group">
         <a href="#quickstart" class="btn-primary">Get Started</a>
-        <a href="#languages" class="btn-secondary">View Supported Languages</a>
-        <a href="#rules" class="btn-secondary">NASA Power of 10 Rules</a>
+        <a href="#rule-explorer" class="btn-secondary">Explore 63+ Rules</a>
+        <a href="#agent-scanner" class="btn-secondary">AI Agent Audit</a>
       </div>
     </section>
 
@@ -107,50 +106,73 @@
       <div class="feature-card">
         <div class="feature-icon">🚀</div>
         <h3>NASA Power of Ten</h3>
-        <p>Enforces safety-critical software reliability rules (bounded loops, no recursion, heap allocation checks, assertions, and strict variable scoping).</p>
+        <p>Enforces safety-critical software reliability rules: bounded loops, static memory allocation, recursion elimination, assertion density, and structured control flow.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>AI Agent & Skill Auditing</h3>
+        <p>Scans SKILL.md, AGENTS.md, prompt templates, and agent rules for prompt injection hazards, unsafe shell script execution, hardcoded secrets, and missing guardrails.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚙️</div>
+        <h3>MCP & Model Config Audit</h3>
+        <p>Audits mcp.json, config.json, and model_config.json files for wildcard permission grants, unencrypted env secrets, PyTorch weights deserialization, and exposed endpoints.</p>
       </div>
 
       <div class="feature-card">
         <div class="feature-icon">🌐</div>
         <h3>20 Programming Languages</h3>
-        <p>Full static analysis support for Ada, Bash, C/C++, C#, Elixir, Fortran, Go, Haskell, Java, JS/TS, Julia, Kotlin, Lua, PHP, Python, Ruby, Rust, Scala, Swift, and Zig.</p>
+        <p>Unified static analysis for Ada, Bash, C/C++, C#, Elixir, Fortran, Go, Haskell, Java, JS/TS, Julia, Kotlin, Lua, PHP, Python, Ruby, Rust, Scala, Swift, and Zig.</p>
       </div>
 
       <div class="feature-card">
         <div class="feature-icon">🔒</div>
         <h3>Zero External Dependencies</h3>
-        <p>Written 100% from scratch with pure native JavaScript regex AST parsers. Zero supply-chain dependency vulnerabilities or breaking upstream changes.</p>
+        <p>Built 100% locally from scratch with native regex AST parsers. Zero supply-chain dependency vulnerabilities or breaking upstream package changes.</p>
       </div>
 
       <div class="feature-card">
-        <div class="feature-icon">🛡️</div>
-        <h3>Vulnerability & Security Scanner</h3>
-        <p>Detects unchecked return values, unsafe pointer arithmetic, hardcoded secret credentials, unsafe inputs, and unvalidated boundary conditions.</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">⚙️</div>
-        <h3>CI/CD Integration & Automated Reports</h3>
-        <p>Generates machine-readable JSON, Markdown tables (`--format md`), and formatted console table reports for automated CI/CD pipeline blocking.</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>Local Privacy Guarantee</h3>
-        <p>Runs 100% locally on your workstation or runner. Zero code transmission, zero network calls, zero telemetry, and zero tracking.</p>
+        <div class="feature-icon">📊</div>
+        <h3>SARIF & CI/CD Pipeline Gates</h3>
+        <p>Generates SARIF v2.1.0 (GitHub Code Scanning), machine JSON, and Markdown summaries with threshold quality gate blocking for CI runners.</p>
       </div>
     </section>
 
-    <!-- Supported Languages -->
+    <!-- AI Agent Security Showcase -->
+    <section id="agent-scanner" class="card">
+      <div class="section-title">
+        <span class="badge badge-purple">AI & LLM Security</span>
+        <h2>AI Agent, Skill & MCP Server Auditor</h2>
+      </div>
+
+      <p style="text-align: center; color: var(--pv-text-secondary); max-width: 800px; margin: 0 auto 2rem auto;">
+        SPC v1.4.0 extends static code analysis to audit your AI agent infrastructure, skills, model context protocol servers, and model deployment configs:
+      </p>
+
+      <div class="features-grid" style="margin-bottom: 0;">
+        <div class="feature-card">
+          <h3>🎯 Skill & Prompt Injection Detection</h3>
+          <p>Flags unescaped user variable interpolation in system prompts, jailbreak patterns, and dangerous shell execution commands like <code>curl | bash</code> inside <code>SKILL.md</code> files.</p>
+        </div>
+        <div class="feature-card">
+          <h3>🛡️ MCP Server Permission Audits</h3>
+          <p>Flags wildcard grants like <code>"command(.*)"</code> or <code>"write_file(.*)"</code> in <code>mcp.json</code> configs, unencrypted env API keys, and unauthenticated public endpoints.</p>
+        </div>
+        <div class="feature-card">
+          <h3>🧠 LLM Model Deserialization Checks</h3>
+          <p>Audits <code>model_config.json</code> and Ollama Modelfiles for unsafe PyTorch <code>weights_only=False</code> flags, HTTP weight downloads, and exposed LLM API keys.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 20 Supported Languages -->
     <section id="languages" class="card">
       <div class="section-title">
         <span class="badge">Multi-Language Ecosystem</span>
         <h2>20 Supported Programming Languages</h2>
       </div>
-
-      <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1.5rem;">
-        Space Proof Code provides unified, rule-based static analysis across all major systems and application languages:
-      </p>
 
       <div class="lang-chips">
         <span class="lang-chip">🚀 Ada (.ada, .adb)</span>
@@ -176,7 +198,42 @@
       </div>
     </section>
 
-    <!-- Code Quickstart Section -->
+    <!-- Interactive Rule Explorer -->
+    <section id="rule-explorer" class="card">
+      <div class="section-title">
+        <span class="badge">Interactive Registry</span>
+        <h2>Rule & Vulnerability Explorer</h2>
+      </div>
+
+      <div class="search-box">
+        <input type="text" id="ruleSearchInput" class="search-input" placeholder="Search rules (e.g. prompt_injection, recursion, sql_injection, mcp)..." oninput="filterRules()">
+        <select id="categoryFilter" class="filter-select" onchange="filterRules()">
+          <option value="all">All Categories</option>
+          <option value="nasa">NASA Power of 10</option>
+          <option value="security">Security Rules</option>
+          <option value="agent">AI Agent & MCP</option>
+          <option value="quality">Code Quality</option>
+        </select>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="rule-table" id="rulesTable">
+          <thead>
+            <tr>
+              <th>Rule Name</th>
+              <th>Category</th>
+              <th>Severity</th>
+              <th>Documentation Reference</th>
+            </tr>
+          </thead>
+          <tbody id="rulesTableBody">
+            <!-- Populated via inline JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CLI Quickstart Section -->
     <section id="quickstart" class="card">
       <div class="section-title">
         <span class="badge">CLI Quickstart</span>
@@ -187,14 +244,17 @@
 <span class="cm"># Install Space Proof Code globally via npm</span>
 <span class="fn">npm</span> install -g <span class="str">@putervision/spc</span>
 
-<span class="cm"># Scan a project directory with default NASA Power of 10 rules</span>
-<span class="fn">spc</span> ./src
+<span class="cm"># Scan current directory for space-proofing & security issues</span>
+<span class="fn">spc</span> .
 
-<span class="cm"># Output JSON report file for machine-readable CI/CD integration</span>
-<span class="fn">spc</span> . --format json -o spc-report.json
+<span class="cm"># Audit AI Agent skills, prompt templates, MCP configs & model files</span>
+<span class="fn">spc</span> . <span class="kw">--ai-only</span> <span class="kw">--format</span> json <span class="kw">-o</span> agent-report.json
 
-<span class="cm"># Fail build if severity threshold or issues are detected</span>
-<span class="fn">spc</span> ./src --max-severity 4 --fail-on-issue
+<span class="cm"># Output SARIF report for GitHub Code Scanning integration</span>
+<span class="fn">spc</span> . <span class="kw">--format</span> sarif <span class="kw">-o</span> spc-results.sarif
+
+<span class="cm"># Enforce CI quality gate (fail if severity 4+ detected)</span>
+<span class="fn">spc</span> . <span class="kw">--max-issue-severity</span> 4 <span class="kw">--fail-on-issue</span>
       </div>
     </section>
 
@@ -202,28 +262,100 @@
     <section id="security" class="card">
       <div class="section-title">
         <span class="badge">Privacy & Legal Disclaimers</span>
-        <h2>PuterVision LLC Security Guarantee</h2>
+        <h2>PuterVision LLC Guarantees</h2>
       </div>
 
-      <div style="max-width: 800px; margin: 0 auto; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+      <div style="max-width: 800px; margin: 0 auto; color: var(--pv-text-secondary); font-size: 0.95rem; line-height: 1.6;">
         <p style="margin-bottom: 1rem;">
-          <strong style="color: var(--text-primary);">Data Privacy & Local Execution Guarantee:</strong> Space Proof Code (`@putervision/spc`) is engineered by PuterVision LLC with a strict <strong>local-first privacy architecture</strong>. All static analysis, regex AST parsing, and vulnerability scanning run 100% locally on your machine. No source code, directory structures, or scan results are ever transmitted or collected.
+          <strong style="color: var(--pv-text-primary);">Data Privacy & Local Execution Guarantee:</strong> Space Proof Code (<code>@putervision/spc</code>) is engineered by PuterVision LLC with a strict <strong>local-first privacy architecture</strong>. All static analysis, regex parsing, and vulnerability scanning run 100% locally on your machine. No source code, directory structures, or scan results are ever transmitted, telemetry-tracked, or collected.
         </p>
 
         <p style="margin-bottom: 1rem;">
-          <strong style="color: var(--text-primary);">Static Analysis & Safety Disclaimer:</strong> While `spc` helps identify critical security anti-patterns (e.g., unchecked return values, unsafe pointer math, recursion hazards, and hardcoded credentials), static analysis cannot guarantee the total absence of runtime defects or mission failures. Developers are advised to complement `spc` with dynamic testing, fuzzing, and formal verification in safety-critical production systems.
+          <strong style="color: var(--pv-text-primary);">Static Analysis & Safety Disclaimer:</strong> While <code>spc</code> enforces static code rules inspired by NASA's Power of Ten reliability guidelines and AI agent security standards, static analysis cannot guarantee the total absence of runtime defects or mission failures. Developers are advised to complement <code>spc</code> with dynamic testing, fuzzing, and formal verification.
         </p>
 
         <p>
-          <strong style="color: var(--text-primary);">Trademarks & Non-Affiliation Notice:</strong> All product names, trademarks, service marks, logos, and brands (such as NASA, ISO/IEC, MISRA, Node.js, and GitHub) referenced in this project and documentation are the property of their respective owners. References to NASA's Power of Ten rules or third-party guidelines are for educational and compatibility identification purposes only, and do not imply endorsement, sponsorship, or affiliation with PuterVision LLC.
+          <strong style="color: var(--pv-text-primary);">Trademarks & Non-Affiliation Notice:</strong> All product names, trademarks, service marks, logos, and brands (such as NASA, ISO/IEC, MISRA, Node.js, and GitHub) referenced in this project are the property of their respective owners. References are for educational and compatibility identification purposes only.
         </p>
       </div>
     </section>
 
     <footer>
-      <p>© 2025-2026 <a href="https://putervision.com" target="_blank" rel="noopener noreferrer" style="color: var(--accent-cyan); text-decoration: none;">PuterVision LLC</a>. Released under the MIT License.</p>
-      <p style="margin-top: 0.5rem; font-size: 0.82rem;">Space Proof Code • 20 Languages • Zero External Dependencies • Local Execution</p>
+      <p>© 2025-2026 <a href="https://putervision.com" target="_blank" rel="noopener noreferrer" style="color: var(--pv-cyan); text-decoration: none;">PuterVision LLC</a>. Released under the MIT License.</p>
+      <p style="margin-top: 0.5rem; font-size: 0.82rem;">Space Proof Code • 20 Languages • AI Agent Auditing • Zero External Dependencies • Local Execution</p>
     </footer>
   </main>
+
+  <script>
+    const rulesData = [
+      { name: 'recursion', category: 'nasa', severity: 4, url: 'docs/nasa-rules.md#recursion' },
+      { name: 'unbounded_loops', category: 'nasa', severity: 5, url: 'docs/nasa-rules.md#unbounded-loops' },
+      { name: 'dynamic_memory', category: 'nasa', severity: 3, url: 'docs/nasa-rules.md#dynamic-memory' },
+      { name: 'async_risk', category: 'nasa', severity: 4, url: 'docs/nasa-rules.md#async-risk' },
+      { name: 'global_vars', category: 'nasa', severity: 3, url: 'docs/nasa-rules.md#global-vars' },
+      { name: 'set_timeout', category: 'nasa', severity: 4, url: 'docs/nasa-rules.md#set-timeout' },
+      { name: 'complex_flow', category: 'nasa', severity: 2, url: 'docs/nasa-rules.md#complex-flow' },
+      { name: 'try_catch', category: 'quality', severity: 2, url: 'docs/nasa-rules.md#try-catch' },
+      { name: 'multiple_returns', category: 'quality', severity: 2, url: 'docs/nasa-rules.md#multiple-returns' },
+      { name: 'nested_conditionals', category: 'quality', severity: 2, url: 'docs/nasa-rules.md#nested-conditionals' },
+      { name: 'exceeds_max_func_lines', category: 'quality', severity: 3, url: 'docs/nasa-rules.md#exceeds-max-function-lines' },
+      { name: 'unchecked_func_return', category: 'quality', severity: 2, url: 'docs/nasa-rules.md#unchecked-function-return' },
+      { name: 'unchecked_func_return_crit', category: 'security', severity: 4, url: 'docs/nasa-rules.md#unchecked-function-return-critical' },
+      { name: 'eval_usage', category: 'security', severity: 5, url: 'docs/security-rules.md#eval-usage' },
+      { name: 'unsafe_input', category: 'security', severity: 4, url: 'docs/security-rules.md#unsafe-input' },
+      { name: 'network_call', category: 'security', severity: 3, url: 'docs/security-rules.md#network-call' },
+      { name: 'weak_crypto', category: 'security', severity: 4, url: 'docs/security-rules.md#weak-crypto' },
+      { name: 'unsafe_file_op', category: 'security', severity: 3, url: 'docs/security-rules.md#unsafe-file-op' },
+      { name: 'unsanitized_exec', category: 'security', severity: 5, url: 'docs/security-rules.md#unsanitized-exec' },
+      { name: 'exposed_secrets', category: 'security', severity: 5, url: 'docs/security-rules.md#exposed-secrets' },
+      { name: 'unrestricted_cors', category: 'security', severity: 4, url: 'docs/security-rules.md#unrestricted-cors' },
+      { name: 'sql_injection', category: 'security', severity: 5, url: 'docs/security-rules.md#sql-injection' },
+      { name: 'ssrf_risk', category: 'security', severity: 4, url: 'docs/security-rules.md#ssrf-risk' },
+      { name: 'pickle_deserialize', category: 'security', severity: 5, url: 'docs/security-rules.md#pickle-deserialize' },
+      { name: 'prompt_injection_hazard', category: 'agent', severity: 5, url: 'docs/ai-agent-rules.md#prompt-injection-hazard' },
+      { name: 'unsafe_skill_command', category: 'agent', severity: 5, url: 'docs/ai-agent-rules.md#unsafe-skill-command' },
+      { name: 'unbounded_agent_loop', category: 'agent', severity: 4, url: 'docs/ai-agent-rules.md#unbounded-agent-loop' },
+      { name: 'hardcoded_agent_secret', category: 'agent', severity: 5, url: 'docs/ai-agent-rules.md#hardcoded-agent-secret' },
+      { name: 'overly_broad_tool_grant', category: 'agent', severity: 4, url: 'docs/ai-agent-rules.md#overly-broad-tool-grant' },
+      { name: 'overly_permissive_mcp_grant', category: 'agent', severity: 5, url: 'docs/ai-agent-rules.md#overly-permissive-mcp-grant' },
+      { name: 'unencrypted_mcp_env_secret', category: 'agent', severity: 5, url: 'docs/ai-agent-rules.md#unencrypted-mcp-env-secret' },
+      { name: 'unsafe_mcp_tool_schema', category: 'agent', severity: 4, url: 'docs/ai-agent-rules.md#unsafe-mcp-tool-schema' },
+      { name: 'exposed_mcp_endpoint', category: 'agent', severity: 4, url: 'docs/ai-agent-rules.md#exposed-mcp-endpoint' },
+      { name: 'unsafe_model_deserialization', category: 'agent', severity: 5, url: 'docs/ai-agent-rules.md#unsafe-model-deserialization' },
+      { name: 'insecure_model_endpoint', category: 'agent', severity: 4, url: 'docs/ai-agent-rules.md#insecure-model-endpoint' },
+      { name: 'unauthenticated_model_download', category: 'agent', severity: 4, url: 'docs/ai-agent-rules.md#unauthenticated-model-download' },
+    ];
+
+    function renderRules(rules) {
+      const tbody = document.getElementById('rulesTableBody');
+      tbody.innerHTML = '';
+      rules.forEach(rule => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><code>${rule.name}</code></td>
+          <td><span class="badge" style="margin:0; padding: 0.2rem 0.6rem;">${rule.category}</span></td>
+          <td><span class="severity-pill sev-${rule.severity}">${rule.severity}/5</span></td>
+          <td><a href="https://github.com/putervision/spc/tree/main/${rule.url}" target="_blank" style="color: var(--pv-cyan); text-decoration: none;">View Docs →</a></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterRules() {
+      const query = document.getElementById('ruleSearchInput').value.toLowerCase();
+      const cat = document.getElementById('categoryFilter').value;
+
+      const filtered = rulesData.filter(rule => {
+        const matchesQuery = rule.name.toLowerCase().includes(query) || rule.category.toLowerCase().includes(query);
+        const matchesCat = cat === 'all' || rule.category === cat;
+        return matchesQuery && matchesCat;
+      });
+
+      renderRules(filtered);
+    }
+
+    // Initial render
+    renderRules(rulesData);
+  </script>
 </body>
 </html>

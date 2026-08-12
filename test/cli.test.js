@@ -6,12 +6,12 @@ const CLI_PATH = path.join(__dirname, '../bin/cli.js');
 describe('CLI Integration', () => {
   it('outputs version string with --version', () => {
     const output = execSync(`node "${CLI_PATH}" --version`, { encoding: 'utf-8' });
-    expect(output).toContain('space-proof-code v1.3.0');
+    expect(output).toContain('space-proof-code v1.4.0');
   });
 
   it('outputs help text with --help', () => {
     const output = execSync(`node "${CLI_PATH}" --help`, { encoding: 'utf-8' });
-    expect(output).toContain('Space Proof Code Tool');
+    expect(output).toContain('space-proof-code v1.4.0');
     expect(output).toContain('--exclude');
     expect(output).toContain('--max-issue-severity');
   });
