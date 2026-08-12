@@ -1,7 +1,7 @@
 {
   "tool": "space-proof-code",
   "version": "1.4.0",
-  "description": "High-performance zero-dependency static analysis tool enforcing NASA Power of Ten reliability and security rules across 20 programming languages, plus AI agent, MCP server config, skill, and LLM model configuration security auditing.",
+  "description": "High-performance zero-dependency static analysis tool enforcing NASA Power of Ten rules across 20 programming languages, plus AI agent skill, MCP server config, prompt template, and LLM model security auditing.",
   "supportedLanguages": [
     "ada",
     "bash",
