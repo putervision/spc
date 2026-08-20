@@ -5,6 +5,37 @@ All notable changes to the `@putervision/spc` (Space Proof Code) project will be
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-08-20
+
+### Added
+- **Zero-Phantom Rule Engine Parity & CI Integrity Guard**:
+  - Implemented concrete regular expression detection engines for all 16 previously uninstantiated rules across JavaScript, Python, C/C++, C#, Java, Go, PHP, Ruby, Rust, Swift, and Zig.
+  - Reached 100% parity across all 63 registered rules in `PATTERN_INFO`.
+  - Added automated build-time integrity assertion in `scripts/build.js` and dedicated `test/integrity.test.js` to permanently prevent phantom rule regressions.
+- **Performance & High-Throughput Optimization**:
+  - Replaced $O(N)$ string slicing line calculations with precomputed binary search line offset lookup ($O(\log L)$).
+  - Added precompiled regular expression caching in `lib/ignore.js`.
+  - Added conditional SHA-256 file hashing (skips expensive hashing when checksum flags are inactive).
+  - Added `DEFAULT_MAX_FILE_SIZE` (5 MB) protection guard to prevent out-of-memory errors on giant binaries or generated bundles.
+  - Added `scripts/benchmark.js` benchmarking tool achieving >550 files/sec scan throughput.
+- **Security Hardening & ReDoS Safety**:
+  - Eliminated nested quantifier catastrophic backtracking risks across all 23 language engines and added `test/redos_safety.test.js`.
+  - Enforced path traversal containment and schema structure validation in `lib/plugin.js`.
+  - Upgraded engine compatibility floor to Node.js `>=18.17.0` in `package.json`.
+  - Made environment `IGNORE_PATTERNS` additive alongside default ignore patterns, with `--no-default-ignores` toggle support.
+  - Added strict 64-hex SHA-256 regex enforcement in `lib/checksum.js`.
+- **Packaging, Multi-Target CLI & Subpath Exports**:
+  - Added multi-target directory scanning support to `bin/cli.js` (`spc dir1 dir2 ...`).
+  - Added standard `exports` map in `package.json` for modular subpath imports (`@putervision/spc/info`, `@putervision/spc/scanner`, etc.).
+  - Added `--color` and `--no-color` CLI flag support with `NO_COLOR` / `FORCE_COLOR` environment variable precedence.
+  - Fixed `getCapabilities().ruleCategories` export in `lib/info.js`.
+
+### Fixed
+- Fixed positional target directory overwrite bug in `bin/cli.js` and `.github/workflows/ci.yml`.
+- Fixed `package.json` main entry point and updated `self-check` script.
+- Fixed non-regex `function_regex` in `lib/lang/model.js` and `lib/lang/mcp.js`.
+- Fixed permission error detection in `safeRealPath` (`EACCES`).
+
 ## [1.4.0] - 2026-08-12
 
 ### Added

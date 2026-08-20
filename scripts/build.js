@@ -55,11 +55,19 @@ async function build() {
   }
   console.log(`✅ Verified ${totalRules} rules in PATTERN_INFO registry.`);
 
-  // 2. Validate Language Pattern Engines
-  console.log('\n[2/4] Validating 23 Language & AI pattern rule engines...');
+  // 2. Validate Language Pattern Engines and Parity
+  console.log(
+    '\n[2/4] Validating 23 Language & AI pattern rule engines and checking rule parity...'
+  );
   const langDir = path.join(__dirname, '..', 'lib', 'lang');
   const langFiles = await fs.readdir(langDir);
   let totalEnginePatterns = 0;
+  const implementedRuleKeys = new Set([
+    'exceeds_max_func_lines',
+    'unchecked_func_return',
+    'unchecked_func_return_crit',
+    'checksum_mismatch',
+  ]);
 
   for (const file of langFiles) {
     if (file.endsWith('.js')) {
@@ -70,6 +78,7 @@ async function build() {
       if (patternExport && patternExport.patterns) {
         for (const [key, pattern] of Object.entries(patternExport.patterns)) {
           totalEnginePatterns++;
+          implementedRuleKeys.add(key);
           if (!(pattern instanceof RegExp)) {
             console.error(
               `❌ File ${file} pattern '${key}' is not a valid RegExp`
@@ -85,8 +94,20 @@ async function build() {
       }
     }
   }
+
+  const phantomRules = Object.keys(PATTERN_INFO).filter(
+    (k) => !implementedRuleKeys.has(k)
+  );
+  if (phantomRules.length > 0) {
+    console.error(
+      '❌ Build integrity guard failed: Found phantom rules with no engine implementation:'
+    );
+    phantomRules.forEach((r) => console.error('  - ' + r));
+    process.exit(1);
+  }
+
   console.log(
-    `✅ Validated ${langFiles.length} rule engines containing ${totalEnginePatterns} compiled regex patterns.`
+    `✅ Validated ${langFiles.length} rule engines containing ${totalEnginePatterns} compiled regex patterns (zero phantom rules).`
   );
 
   // 3. Create dist/ directory and write distribution artifacts
@@ -120,15 +141,20 @@ async function build() {
 
   // 4. Verify docs index sync
   console.log('\n[4/4] Verifying docs/index.html synchronization...');
+  const currentVersion = require('../package.json').version;
   const indexHtml = await fs.readFile(
     path.join(__dirname, '..', 'docs', 'index.html'),
     'utf8'
   );
-  if (!indexHtml.includes('RELEASE v1.4.0')) {
-    console.error('❌ docs/index.html is missing v1.4.0 release badge!');
+  if (!indexHtml.includes(`RELEASE v${currentVersion}`)) {
+    console.error(
+      `❌ docs/index.html is missing v${currentVersion} release badge!`
+    );
     process.exit(1);
   }
-  console.log('✅ docs/index.html version badge verified.');
+  console.log(
+    `✅ docs/index.html version badge verified for v${currentVersion}.`
+  );
 
   console.log('\n========================================================');
   console.log('🎉 BUILD SUCCESSFUL! @putervision/spc is production-ready.');

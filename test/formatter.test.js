@@ -67,9 +67,12 @@ describe('formatResults (lib/formatter.js)', () => {
     expect(mdOutput).toContain('\\|');
   });
 
-  it('returns null for default table format', () => {
+  it('formats results as plain-text table report', () => {
     const tableOutput = formatResults(sampleResults, { format: 'table' });
-    expect(tableOutput).toBeNull();
+    expect(typeof tableOutput).toBe('string');
+    expect(tableOutput).toContain('Scan Report');
+    expect(tableOutput).toContain('app.js');
+    expect(tableOutput).toContain('unbounded_loops');
   });
 
   it('handles empty results array', () => {

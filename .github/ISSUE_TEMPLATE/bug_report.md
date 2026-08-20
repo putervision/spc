@@ -24,4 +24,4 @@ A clear and concise description of what you expected to happen.
 **Environment:**
 - OS: [e.g. Linux, macOS, Windows]
 - Node.js Version: [e.g. 18.x, 20.x]
-- `@putervision/spc` Version: [e.g. 1.4.0]
+- `@putervision/spc` Version: [e.g. 1.5.0]

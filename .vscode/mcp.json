@@ -6,7 +6,8 @@
         "run"
       ],
       "env": {
-        "STATE_MEMORY_MCP_PROJECT": "spc"
+        "STATE_MEMORY_MCP_PROJECT": "spc",
+        "STATE_MEMORY_COMPAT": "true"
       }
     },
     "vision-memory-mcp": {

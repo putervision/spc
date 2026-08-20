@@ -18,7 +18,7 @@ spc --agent-tools
 ```json
 {
   "name": "space-proof-code",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "High-performance zero-dependency static analysis tool enforcing NASA Power of Ten reliability rules across 20 programming languages, plus AI agent skill, MCP server config, prompt template, and LLM model configuration security auditing.",
   "operations": [
     {

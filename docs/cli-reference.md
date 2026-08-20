@@ -31,6 +31,8 @@ spc [directory] [options]
 | `--max-severity <N>` | N/A | Fails run (exit code 1) if average severity risk level >= N | N/A |
 | `--max-issue-severity <N>` | N/A | Fails run (exit code 1) if any single issue severity >= N | N/A |
 | `--fail-on-issue` | N/A | Fails run (exit code 1) if any space-proofing or security issues are found | `false` |
+| `--color` | N/A | Forces colored ANSI terminal output | Auto-detect |
+| `--no-color` | N/A | Disables colored ANSI terminal output (honors `NO_COLOR`) | Auto-detect |
 
 ---
 

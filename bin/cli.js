@@ -86,7 +86,7 @@ function listRules() {
 
 async function main() {
   const args = process.argv.slice(2);
-  let targetDir = process.cwd();
+  const targetDirs = [];
   let createSums = false;
   let format = 'table';
   let outputFile = null;
@@ -162,6 +162,16 @@ async function main() {
       quiet = true;
       continue;
     }
+    if (arg === '--color') {
+      process.env.FORCE_COLOR = '1';
+      delete process.env.NO_COLOR;
+      continue;
+    }
+    if (arg === '--no-color') {
+      process.env.NO_COLOR = '1';
+      delete process.env.FORCE_COLOR;
+      continue;
+    }
     if (arg === '--max-severity') {
       maxSeverityThreshold = parseFloat(args[++i]);
       continue;
@@ -175,11 +185,13 @@ async function main() {
       continue;
     }
     if (!arg.startsWith('-')) {
-      targetDir = arg;
+      targetDirs.push(arg);
     }
   }
 
-  await scanDirectory(targetDir, {
+  const dirsToScan = targetDirs.length > 0 ? targetDirs : [process.cwd()];
+
+  await scanDirectory(dirsToScan, {
     createSums,
     format,
     outputFile,
@@ -196,7 +208,7 @@ async function main() {
   });
 }
 
-async function scanDirectory(directory, options = {}) {
+async function scanDirectory(directories, options = {}) {
   const {
     createSums = false,
     format = 'table',
@@ -213,19 +225,24 @@ async function scanDirectory(directory, options = {}) {
     quiet = false,
   } = options;
 
+  const targetDirs = Array.isArray(directories) ? directories : [directories];
   const startTime = Date.now();
-  const dirExists = await fs
-    .access(directory)
-    .then(() => true)
-    .catch(() => false);
 
-  if (!dirExists) {
-    console.error(`Error: Directory '${directory}' not found or inaccessible.`);
-    process.exitCode = 1;
-    return;
+  const validDirs = [];
+  for (const dir of targetDirs) {
+    const dirExists = await fs
+      .access(dir)
+      .then(() => true)
+      .catch(() => false);
+    if (!dirExists) {
+      console.error(`Error: Directory '${dir}' not found or inaccessible.`);
+      process.exitCode = 1;
+      return;
+    }
+    validDirs.push(dir);
   }
 
-  const fileConfig = await loadConfig(configPath || directory);
+  const fileConfig = await loadConfig(configPath || targetDirs[0]);
   const ignorePatterns = buildIgnorePatterns([
     ...extraExcludes,
     ...(fileConfig.ignorePatterns || []),
@@ -233,7 +250,7 @@ async function scanDirectory(directory, options = {}) {
 
   if (!quiet && format === 'table' && !outputFile) {
     console.error(
-      `Scanning ${directory} for space-proofing & AI security issues...`
+      `Scanning ${targetDirs.join(', ')} for space-proofing & AI security issues...`
     );
     console.error(`- Version: ${VERSION}`);
     console.error(`- Create checksums: ${createSums}`);
@@ -243,12 +260,16 @@ async function scanDirectory(directory, options = {}) {
   }
 
   try {
-    const results = await scanCodebase(directory, createSums, ignorePatterns, {
-      category,
-      aiOnly,
-      skipAi,
-      configPath,
-    });
+    let results = [];
+    for (const dir of validDirs) {
+      const dirResults = await scanCodebase(dir, createSums, ignorePatterns, {
+        category,
+        aiOnly,
+        skipAi,
+        configPath,
+      });
+      results.push(...dirResults);
+    }
     const end = Date.now();
     const timeDiff = (end - startTime) / 1000;
 

@@ -42,7 +42,7 @@ Executes the full static analysis scan across 20 programming languages and AI ag
 
 - **`directory`** *(string)*: Absolute or relative directory path to scan.
 - **`createSums`** *(boolean, default: false)*: Generate `checksums.sha256.txt` manifest.
-- **`ignorePatterns`** *(string[], default: [])*: Array of custom ignore glob patterns.
+- **`ignorePatterns`** *(string[], default: [])*: Array of custom ignore regex or glob pattern strings.
 - **`options`** *(Object, optional)*:
   - `options.category` *(string)*: Filter checks by category (`"nasa"`, `"security"`, `"quality"`, `"agent"`).
   - `options.aiOnly` *(boolean)*: Scan only AI Agent skills, prompt instructions, MCP configs, and model files.

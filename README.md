@@ -88,7 +88,7 @@ npm run self-check
 
 > [!IMPORTANT]
 > **Data Privacy & Local Execution Guarantee**  
-> `spc` (Space Proof Code) is engineered by PuterVision LLC with a strict **local-first privacy architecture**. All static analysis, regex parsing, and vulnerability scanning run 100% locally on your machine. No source code, directory structures, or scan results are ever transmitted, telemetry-tracked, or collected by PuterVision LLC.
+> `spc` (Space Proof Code) is engineered by PuterVision with a strict **local-first privacy architecture**. All static analysis, regex parsing, and vulnerability scanning run 100% locally on your machine. No source code, directory structures, or scan results are ever transmitted, telemetry-tracked, or collected by PuterVision.
 
 > [!WARNING]
 > **Static Analysis & Safety Disclaimer**  
@@ -96,10 +96,10 @@ npm run self-check
 
 > [!NOTE]
 > **Trademarks & Non-Affiliation Notice**  
-> All product names, trademarks, service marks, logos, and brands (such as NASA, ISO/IEC, MISRA, Node.js, and GitHub) referenced in this documentation are the property of their respective owners. References to NASA's Power of Ten rules or third-party guidelines are for educational and compatibility identification purposes only, and do not imply endorsement, sponsorship, or affiliation with PuterVision LLC.
+> All product names, trademarks, service marks, logos, and brands (such as NASA, ISO/IEC, MISRA, Node.js, and GitHub) referenced in this documentation are the property of their respective owners. References to NASA's Power of Ten rules or third-party guidelines are for educational and compatibility identification purposes only, and do not imply endorsement, sponsorship, or affiliation with PuterVision.
 
 ---
 
 <p align="center">
-  Developed and maintained by <a href="https://putervision.com" target="_blank" rel="noopener noreferrer">PuterVision LLC</a>. Released under the <a href="./LICENSE">MIT License</a>.
+  Developed and maintained by <a href="https://putervision.com" target="_blank" rel="noopener noreferrer">PuterVision</a>. Released under the <a href="./LICENSE">MIT License</a>.
 </p>

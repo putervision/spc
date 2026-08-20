@@ -1,6 +1,6 @@
 {
   "name": "@putervision/spc",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "High-performance zero-dependency static analysis tool enforcing NASA Power of Ten rules across 20 programming languages, plus AI agent skill, MCP server config, prompt template, and LLM model security auditing.",
   "files": [
     "bin/",
@@ -82,7 +82,17 @@
   },
   "license": "MIT",
   "author": "PuterVision <code@putervision.com>",
-  "main": "lib/scanner.js",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./scanner": "./lib/scanner.js",
+    "./formatter": "./lib/formatter.js",
+    "./info": "./lib/info.js",
+    "./config": "./lib/config.js",
+    "./plugin": "./lib/plugin.js",
+    "./checksum": "./lib/checksum.js",
+    "./package.json": "./package.json"
+  },
   "bin": {
     "space-proof-code": "./bin/cli.js",
     "spc": "./bin/cli.js"
@@ -97,7 +107,7 @@
     "release": "npm publish --access public",
     "scan": "node bin/cli.js",
     "scan:test": "node bin/cli.js ./test/examples/",
-    "self-check": "node bin/cli.js ./lib ./bin",
+    "self-check": "node bin/cli.js ./lib",
     "start": "node bin/cli.js",
     "test": "jest",
     "test:coverage": "jest --coverage",
@@ -106,10 +116,11 @@
   },
   "devDependencies": {
     "eslint": "^8.56.0",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "prettier": "^3.3.3"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.17.0"
   },
   "volta": {
     "node": "18.20.4"

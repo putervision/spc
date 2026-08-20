@@ -8,6 +8,7 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
+| v1.5.x  | :white_check_mark: |
 | v1.4.x  | :white_check_mark: |
 | v1.3.x  | :white_check_mark: |
 | v1.2.x  | :white_check_mark: |
@@ -41,6 +42,6 @@ If you discover a security vulnerability or false-negative bypass in `@putervisi
 
 ## License & Disclaimer
 
-Developed and maintained by [PuterVision LLC](https://putervision.com). Released under the [MIT License](LICENSE).
+Developed and maintained by [PuterVision](https://putervision.com). Released under the [MIT License](LICENSE).
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

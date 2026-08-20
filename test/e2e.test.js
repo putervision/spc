@@ -7,7 +7,7 @@ describe('SPC End-to-End CLI Integration Suite', () => {
 
   test('runs CLI --version cleanly', () => {
     const output = execSync(`node ${cliPath} --version`, { encoding: 'utf8' });
-    expect(output).toContain('space-proof-code v1.4.0');
+    expect(output).toContain('space-proof-code v1.5.0');
   });
 
   test('runs CLI --list-rules and outputs rule registry', () => {
@@ -31,7 +31,7 @@ describe('SPC End-to-End CLI Integration Suite', () => {
     });
     const parsed = JSON.parse(output);
     expect(parsed.tool).toBe('space-proof-code');
-    expect(parsed.version).toBe('1.4.0');
+    expect(parsed.version).toBe('1.5.0');
     expect(parsed.summary.totalIssues).toBeGreaterThan(0);
   });
 
