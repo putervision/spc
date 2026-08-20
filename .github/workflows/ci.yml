@@ -32,7 +32,7 @@ jobs:
         run: npm test
 
       - name: Self-scan codebase with SPC
-        run: node bin/cli.js ./lib --max-issue-severity 5
+        run: npm run self-check
 
       - name: Verify package contents
         run: npm pack --dry-run
